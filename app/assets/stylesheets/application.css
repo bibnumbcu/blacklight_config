@@ -1,0 +1,125 @@
+/*
+ * This is a manifest file that'll be compiled into application.css, which will include all the files
+ * listed below.
+ *
+ * Any CSS and SCSS file within this directory, lib/assets/stylesheets, vendor/assets/stylesheets,
+ * or vendor/assets/stylesheets of plugins, if any, can be referenced here using a relative path.
+ *
+ * You're free to add application-wide styles to this file and they'll appear at the top of the
+ * compiled file, but it's generally better to create a new file per style scope.
+ *
+ *= require_self
+ *= require user
+ *= require application
+ *= require blacklight
+ */
+ 
+ /*
+ * Used by blacklight_range_limit
+ *= require  'blacklight_range_limit'
+ */         
+ 
+.logo_accueil{
+  margin-left: 20px;
+}
+.accueil{
+  margin-top:3px;
+}
+.maison{
+  margin-top:-2px;
+}
+
+#document h1 {
+   font-size: 20px; line-height: 25px;
+}
+
+
+form.range_limit input.range_begin, form.range_limit input.range_end {
+  border:1px solid #DDDDDD;
+  width: 50px;
+}
+
+
+/** Image de couverture */
+.couverture{
+   border:1px dotted #777;
+   border-radius:3px;
+ }
+ 
+.document-index .couverture{
+   width:50px;
+ }
+ 
+.document-index dl{
+   width:80%;
+   float:left;
+   
+ }
+ 
+ .document-index{
+   overflow: auto;
+ }
+ 
+ /****** Localisations ****************/
+ 
+ #localisations{
+   clear: both;
+   margin-top:10px;
+ }
+
+ #localisations tr, #localisations td{
+   border : 1px dotted #ddd; 
+   text-align : left; 
+ }
+ 
+ 
+#localisations tr:first-child > td{
+   font-size: 0.9em;   
+   color: #444;
+ }
+ 
+ #localisations table{
+ width: 100%;
+ }
+ 
+ /****** Nouveautes ******************/
+.nouveautes ul{
+  border-left : 1px #d4d4d4 dotted;
+  padding:0 20px;
+  -moz-column-count:3;
+  -webkit-column-count:3;
+  -o-column-count:3;
+  column-count:3;
+  -moz-column-gap:40px;
+  -webkit-column-gap:40px;
+  -o-column-gap:40px;
+  column-gap:40px;
+  -webkit-column-rule-width:1px;
+  -webkit-column-rule-color:#d4d4d4;
+  -webkit-column-rule-style:dotted;
+  -moz-column-rule-width:1px;
+  -moz-column-rule-color:#d4d4d4;
+  -moz-column-rule-style:dotted;
+  -o-column-rule-width:1px;
+  -o-column-rule-color:#d4d4d4;
+  -o-column-rule-style:dotted;
+  column-rule-width:1px;
+  column-rule-color:#d4d4d4;
+  column-rule-style:dotted;
+}
+
+.nouveautes ul li{
+  list-style-type: none;
+}
+.nouveautes ul li a.active{
+  color: #333;
+
+}
+
+.disponibilite{
+   border: 1px dotted #ccc;
+}
+
+#search_field{
+   width : 150px;
+}

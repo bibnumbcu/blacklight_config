@@ -1,0 +1,8 @@
+<tr>
+<td><%= get_library_title reservations['succursale'] %></td>
+<td class="titre"><%= link_to reservations['titre'], '/catalog/' + reservations['titn'] %></td>
+<td><%= date_in_french reservations['date_echeance'] %></td>
+<td><%= button_to "Annuler la réservation", :action=>"reservation", :controller=>"user", :cancel => 1, :barcode => reservations['barcode'] 
+   %></td>
+</tr>
+

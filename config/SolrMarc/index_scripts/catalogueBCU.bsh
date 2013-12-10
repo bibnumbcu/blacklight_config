@@ -1,0 +1,389 @@
+import org.apache.log4j.Logger;
+import org.marc4j.*;
+import org.marc4j.marc.*;
+import org.solrmarc.marc.MarcImporter;
+import org.solrmarc.tools.SolrMarcIndexerException;
+import org.solrmarc.tools.Utils;
+import org.solrmarc.tools.CallNumUtils;
+
+
+// define the base level indexer so that its methods can be called from the script.
+// note that the SolrIndexer code will set this value before the script methods are called.
+org.solrmarc.index.SolrIndexer indexer = null;
+
+/**
+ * Fonction "temporaire" pour mettre une majuscule sur chaque nom de fond spécialisé
+ */
+public String uppercaseBcu(Record record)
+{
+	Set field = indexer.getFieldList(record, "910p");
+	String result ="";
+   Iterator iter = field.iterator();
+   while ( iter.hasNext() ){
+      String value = iter.next();
+      result = result + Character.toUpperCase(value.charAt(0)) + value.substring(1); 
+   }
+   return result;
+}
+
+/**
+ *Retourne la date présente dans le champ 100a
+ */
+public String getPubDateBcu(Record record)
+{
+	String date = indexer.getFieldVals(record, "100a[8-16]", ", ");
+	if (date == null || date.length() == 0)
+		return (null);
+	return Utils.cleanDate(date);
+}
+
+
+package com.jmd.test.dej.date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+/*
+ *Retourne la date présente dans le champ 005
+ */
+public String getModifDateBcu(Record record)
+{
+	String field005 = indexer.getFieldVals(record, "005[0-7]", ", ");
+	if ( field005 == null || field005.length() == 0)
+		return (null);
+	
+	String annee = field005.substring(0, 4);
+	String mois = field005.substring(4, 6);
+	
+	//si le premier chiffre est un zéro on le supprime.
+	if ( mois.substring(0,1).equals("0") )
+	   mois = mois.substring(1,2); 
+	
+	Date aujourdhui = new Date();
+	formaterAnnee = new SimpleDateFormat("yyyy");
+  String currentAnnee = formaterAnnee.format(aujourdhui);
+  
+  //return annee+ " " + mois + "  " + currentAnnee + " test " + annee.equals(currentAnnee);
+  
+  if ( annee.equals(currentAnnee) )
+    return mois;
+	else
+   	return (null);
+}
+
+
+/**
+*   fonction qui récupère les sous champs du champ auteur passé en paramètre et ajoute la ponctuation pour le nom et la fonction.
+*/
+public Set getAuthorsAndFunctions(resultSet, variableFields){
+   for (VariableField fields : variableFields)
+   {
+      if ( fields == null) continue; 
+      
+      StringBuilder authorsBuilder = new StringBuilder();
+      Iterator iter = fields.getSubfields().iterator();
+      while ( iter.hasNext() ) {
+       Subfield f = iter.next(); 
+       char code = f.getCode();
+       if ( code == 'a' ){
+          authorsBuilder.append(f.getData()); 
+          authorsBuilder.append(" ");
+       }
+       if ( code == 'b')  {
+         authorsBuilder.append(f.getData()); 
+       }
+       if ( code == 'd')  {
+         authorsBuilder.append(" ");
+         authorsBuilder.append(f.getData()); 
+       }
+       if ( code == 'c'  ){
+         authorsBuilder.append(", "); 
+         authorsBuilder.append(f.getData()); 
+         }
+      }
+      resultSet.add(authorsBuilder.toString());
+   }
+   return resultSet;
+}
+
+/**
+ *  Récupère les auteurs et leurs fonctions sur les champs 700ab4:701ab4:702ab4 et ajoute la ponctuation.
+ *
+ */
+public Set getAuthorDisplayBcu(Record record)
+{
+   Set resultSet = new LinkedHashSet();
+
+   List fields700 = record.getVariableFields("700");
+   List fields701 = record.getVariableFields("701");
+   List fields702 = record.getVariableFields("702");
+   
+   resultSet = getAuthorsAndFunctions(resultSet, fields700);
+   resultSet = getAuthorsAndFunctions(resultSet, fields701);
+   resultSet = getAuthorsAndFunctions(resultSet, fields702);
+   
+   return resultSet;
+}
+
+/**
+ * Retourne l'auteur dans les champs 700:701:702 et le renvoie sous forme formattée pour le champ de tri de solr.
+ */
+public String getSortableAuthorBcu(Record record)
+{
+  
+   StringBuffer resultBuf = new StringBuffer();
+
+   DataField df = (DataField) record.getVariableField("700");
+   // main entry personal name
+   if (df != null)
+      resultBuf.append(df);
+
+   df = (DataField) record.getVariableField("701");
+   // main entry corporate name
+   if (df != null)
+      resultBuf.append(df);
+
+   df = (DataField) record.getVariableField("702");
+   // main entry meeting name
+   if (df != null)
+      resultBuf.append(df);
+
+   // need to sort fields missing 100/110/111 last
+   if (resultBuf.length() == 0)
+   {
+      resultBuf.append(Character.toChars(Character.MAX_CODE_POINT));
+      resultBuf.append(' '); // for legibility in luke
+   }
+
+   // uniform title, main entry
+   df = (DataField) record.getVariableField("200");
+   if (df != null)
+      resultBuf.append(df);
+
+   // Solr field properties should convert to lowercase
+   return resultBuf.toString().trim();
+   
+   return null;
+}
+
+
+public Set getFormatBcu(Record record){
+   Set resultSet = new LinkedHashSet();
+   mapName = "format_bcu.properties";
+   
+   //on test si le 7eme caractere existe
+   resultSet = indexer.getFieldList(record, "000[6-7]");
+   Iterator iter = resultSet.iterator();
+   Boolean doublePos = false;
+   if (iter.hasNext()){
+      String code = iter.next();
+      if ( code.compareToIgnoreCase("aa")==0 || 
+               code.compareToIgnoreCase("ai")==0 ||
+               code.compareToIgnoreCase("ac")==0 ||
+               code.compareToIgnoreCase("am")==0 ||
+               code.compareToIgnoreCase("as")==0 ||
+               code.compareToIgnoreCase("lm")==0 ||
+               code.compareToIgnoreCase("ls")==0 )
+         doublePos = true;
+   }
+  
+   if (! doublePos)
+      resultSet = indexer.getFieldList(record, "000[6]");
+      
+   
+   String internalMapName = indexer.loadTranslationMap(mapName);     
+   resultSet = Utils.remap(resultSet, indexer.findMap(internalMapName), true);
+  
+   String field105a = indexer.getFieldVals(record, "105a[4-7]", ", ");
+   if ( field105a.indexOf("m")!=-1 || field105a.indexOf("v")!=-1 || field105a.indexOf("7")!=-1)
+      resultSet.add("Thèse ou mémoire"); 
+      
+  
+   String field106a = indexer.getFieldVals(record, "106a", ", ");
+   if ( field106a.indexOf("s")!=-1 )
+      resultSet.add("Livre électronique");          
+
+   return resultSet;
+}
+
+/** recupère l'ean dans le champ 073a, si il n'existe pas on prend l'isbn et on lui enlève ses tirets **/
+public String getEanBcu(Record record){
+   String field073a = indexer.getFieldVals(record, "073a", ", ");
+   String result = "";
+   if ( field073a.length() > 0 )
+      result = field073a;
+  
+   Set fields010a = indexer.getFieldList(record, "010a");
+   Iterator iter = fields010a.iterator();
+   while ( iter.hasNext() ){
+      String field = iter.next();
+      //si isbn 13 chiffres + 4 tirets on lui enleve ses tirets pour créer l'ean
+      if (field.length()==17)
+         result = field.replace("-", "");
+   }
+   
+   return result;
+}
+
+/**
+*   fonction qui récupère les champs de titre de revue passés en paramètre et ajoute la ponctuation adéquate.
+*/
+public Set getTitreRevueBcu( Record record, String fieldSpec ){
+   Set resultSet = new LinkedHashSet();
+
+   String[] fldTags = fieldSpec.split(":");
+   for (int i = 0; i < fldTags.length; i++)
+   {
+      // Check to ensure tag length is at least 3 characters
+      if (fldTags[i].length() < 3)
+      {
+          System.err.println("Invalid tag specified: " + fldTags[i]);
+          continue;
+      }
+
+      //champ marc
+      String fldTag = fldTags[i].substring(0, 3);
+      //sous champ marc
+      String subfldTags = fldTags[i].substring(3);
+
+      List marcFieldList = record.getVariableFields(fldTag);
+      if (marcFieldList.isEmpty()) continue;
+      
+      //Pattern subfieldPattern = Pattern.compile(subfldTags.length() == 0 ? "." : subfldTags);
+      for (VariableField fields : marcFieldList)
+      {
+         if ( fields == null) continue; 
+      
+         StringBuilder buffer = new StringBuilder();
+         Iterator iter = fields.getSubfields().iterator();
+         while ( iter.hasNext() ) {            
+            Subfield f = iter.next();
+            char code = f.getCode();
+            if ( code == 't' || code == 'a' ){
+               buffer.append(f.getData()); 
+               buffer.append(". ");
+            }
+            if ( code == 'x')  {
+               buffer.append("ISSN : ");
+               buffer.append( f.getData() ); 
+            }
+         }
+         resultSet.add(buffer.toString());      
+      }
+      }
+
+     return resultSet;
+}
+
+/**
+fonction pour les champs sujet. 
+*/
+public Set getSubjectBcu(Record record, String fieldSpec) {
+   Set resultSet = new LinkedHashSet();
+   String separator = " ,, ";
+   String[] fldTags = fieldSpec.split(":");
+
+   for (int i = 0; i < fldTags.length; i++) {
+      // Check to ensure tag length is at least 3 characters
+      if (fldTags[i].length() < 3){
+          System.err.println("Invalid tag specified: " + fldTags[i]);
+          continue;
+      }
+      //champ marc
+      String fldTag = fldTags[i].substring(0, 3);
+      //sous champ marc
+      String subfldTags = fldTags[i].substring(3);
+      
+      List marcFieldList = record.getVariableFields(fldTag);
+      if (marcFieldList.isEmpty()) continue;
+      
+      for (VariableField fields : marcFieldList) {
+         if ( fields == null) continue; 
+      
+         StringBuilder buffer = new StringBuilder();
+         Iterator iter = fields.getSubfields().iterator();
+         while ( iter.hasNext() ) {            
+            Subfield f = iter.next();
+            char code = f.getCode();
+            if (subfldTags.indexOf(code)!=-1){
+             if (buffer.length() > 0)
+                           buffer.append(separator);
+             buffer.append(f.getData());
+            }
+         
+         }
+         resultSet.add(buffer.toString());      
+      }
+   }
+   return resultSet;
+}
+
+/** fonction de punctuation pour champs uniques (le resultat est une chaine et pas un ensemble) */
+public String setPunctuation(Record record, String fieldSpec, String separators) {
+   String result = new String();
+   String fieldsSeparator = ":";
+   String separatorSeparator = "\\|";
+   
+   String[] fields = fieldSpec.split(fieldsSeparator);
+   String[] separatorsList = separators.split(separatorSeparator);
+   
+   //verification de la conformité des paramètres
+   if ( (fields.length - separatorsList.length) != 1)
+      System.err.println("Paramètres invalides, il doit y avoir un separateur de moins que de champs");
+
+   String firstField = fields[0].substring(0, 3);
+   String secondField = fields[1].substring(0, 3);
+   DataField firstFieldData = (DataField) record.getVariableField(firstField);
+   DataField secondFieldData = (DataField) record.getVariableField(secondField);
+   String firstSubfieldValue = null;
+   String secondSubfieldValue = null;
+   
+   String firstSubfield = fields[0].substring(3);
+   if (firstFieldData != null){
+     Subfield firstSubfieldData = firstFieldData.getSubfield(firstSubfield.charAt(0));  
+     if ( firstSubfieldData != null )
+      firstSubfieldValue = firstSubfieldData.getData(); 
+   }
+   
+   String secondSubfield = fields[1].substring(3);
+   if ( secondFieldData != null ) {
+      Subfield  secondSubfieldData = secondFieldData.getSubfield(secondSubfield.charAt(0));
+      if ( secondSubfieldData != null)
+         secondSubfieldValue = secondSubfieldData.getData();
+   }
+   
+   if ( fields.length == 2 ){
+      //cas final      
+      if ( firstSubfieldValue == null && secondSubfieldValue != null)
+         result = secondSubfieldValue;
+      else if ( secondSubfieldValue == null && firstSubfieldValue != null) 
+         result = firstSubfieldValue;
+      else if ( firstSubfieldValue != null && secondSubfieldValue != null )
+         result = firstSubfieldValue + virgule(separatorsList[0]) + secondSubfieldValue;
+      return result;
+   }
+   else{
+      //cas general
+      String delete = fields[0] + fieldsSeparator ;
+      fieldSpec = fieldSpec.replaceFirst(delete, "");
+      delete = separatorsList[0] + separatorSeparator;
+      separators = separators.replaceFirst(delete, "");
+      
+      if ( firstSubfieldValue == null && secondSubfieldValue != null)
+         result =  result + setPunctuation(record, fieldSpec, separators);
+      else if ( firstSubfieldValue != null && secondSubfieldValue == null )
+         result =  result + firstSubfieldValue + setPunctuation(record, fieldSpec, separators);
+      else if ( firstSubfieldValue != null && secondSubfieldValue != null )
+         result =  result + firstSubfieldValue + virgule(separatorsList[0]) + setPunctuation(record, fieldSpec, separators);
+      return result;
+   }
+   
+}
+
+/** fonction de mapping pour la ponctuation. Elle remplace la lettre v par une virgule (bidouille car on peut pas passer de virgule en paramètre du fichier index.properties) */
+public String virgule( String separator ){
+   if ( separator.equals("v") )
+         return ", ";
+   if ( separator.equals(":") )
+         return " : ";
+   return separator;
+}

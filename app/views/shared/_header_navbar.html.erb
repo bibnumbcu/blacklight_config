@@ -1,0 +1,28 @@
+<div id="header-navbar-fixed-top" class="navbar navbar-fixed-top">
+     <div class="navbar-inner">
+            <div class="container">
+              <div class="row">
+                      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                      <span class="icon-bar"></span>
+                    </a>
+<div class="span3">
+                  <div class="accueil">
+                  <%= link_to image_tag("blacklight/logo.png", :alt => "Accueil du catalogue", :class => 'maison'), root_path %>
+                  <%= link_to image_tag("logo_bcu.png", :alt => "Accueil du catalogue"), "http://bibliotheque.clermont-universite.fr", :class => 'logo_accueil', :title=>"Bibliotheque Clermont Université" %>
+                  </div>
+                  </div>
+                  <div class="span6 clearfix" id="searchbar">         
+                                    <%= render_search_bar  %>
+                  </div>
+
+                  <div class="span3 nav-collapse">
+                    <%= render :partial=>'/user_util_links' %>
+                  
+                  </div>
+
+        </div>
+        </div>
+   </div>
+</div>

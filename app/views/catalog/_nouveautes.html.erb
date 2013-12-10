@@ -1,0 +1,14 @@
+<div id="nouveautes">
+<ul>
+<% @nouveautes.each do | document | -%>
+<div class="" id="<%= render_document_show_field_value :document => document, :field => 'ean_t' %>">
+   <li>
+    <a class="lien-notice " href="catalog/<%= render_document_show_field_value :document => document, :field => 'id' %>">
+     <%=  cut_words( render_document_show_field_value( {:document => document, :field => 'title_display'} ), 100 )  %>
+    </a>
+   </li>
+</div>
+<% end %>
+</ul>
+</div>
+

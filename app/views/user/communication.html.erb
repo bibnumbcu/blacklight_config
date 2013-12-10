@@ -1,0 +1,4 @@
+<h1>Confirmez-vous la demande de communication de cet exemplaire ?</h1>
+<%= button_to "Non", :action=>"communication", :controller=>"user", :barcode => params[:barcode], :cote => params[:cote], :cote_suppl => params[:cote_suppl], :confirmation => 0 %>
+<%= button_to "Oui", :action=>"communication", :controller=>"user", :barcode => params[:barcode], :cote => params[:cote], :cote_suppl => params[:cote_suppl], :confirmation => 1 %>
+<%= @message %>

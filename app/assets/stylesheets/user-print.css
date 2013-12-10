@@ -1,0 +1,20 @@
+body{
+  font-size: 0.8em;
+}
+.navbar, a, h1,
+#prets, #prets + table, #prets +span,
+#communications, #communications + table, #communications + span,
+#reservations, #reservations + table, #reservations + span
+{
+  display: none;
+}
+
+span{
+  display: block;
+  margin-top:10px;
+  font-weight: bold;
+}
+p{
+  display: inline;
+  margin-left: 5px;
+}

@@ -1,0 +1,19 @@
+<tr>
+<% if affichage_exemplaire render_document_show_field_value({:document => @document, :field => 'format'}), localisations %>
+   <td><%= render_bouton_empruntable localisations[:empruntable] %></td>
+   <td><%= localisations[:localisation] %></td>
+   <td><%= localisations[:salle] %></td>
+   <td><%= localisations[:cote] %></td>
+   <td><%= localisations[:volume] %></td>
+   <td><%= localisations[:statut] %></td>
+   <td><%= localisations[:date_retour] %></td>
+
+   <% if localisations[:reservation] %>
+   <td><%= button_to "Réserver l'exemplaire", :action=>"reservation", :controller=>"user", :barcode => localisations[:barcode] %></td>
+   <% end %>
+
+   <% if localisations[:communication] %>
+   <td><%= button_to "Demander l'exemplaire", :action=>"communication", :controller=>"user", :barcode => localisations[:barcode], :cote => localisations[:cote], :cote_suppl => localisations[:cote_suppl] %></td>
+   <% end %>
+<% end %> 
+</tr>

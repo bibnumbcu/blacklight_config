@@ -1,0 +1,4 @@
+<h1>Confirmez-vous la réservation de l'exemplaire ?</h1>
+<%= button_to "Non", :action=>"reservation", :controller=>"user", :barcode => params[:barcode], :confirmation => 0 %>
+<%= button_to "Oui", :action=>"reservation", :controller=>"user", :barcode => params[:barcode], :confirmation => 1 %>
+<%= @message %>

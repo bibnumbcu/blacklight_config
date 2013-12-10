@@ -1,0 +1,10 @@
+<% #Search form can be added here, defaulted to the navbar for Bootstrap version -%>
+<%= render :partial=>'home_text' %>
+
+<div class="nouveautes">
+<h2>Nouveautés <%= @succursale %></h2>
+<%= render_nouveautes_links @succursale %>
+<% if !@succursale.nil? %>
+<%= render_document_index @document_list_nouv %>
+<% end %>
+</div>

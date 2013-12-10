@@ -1,0 +1,11 @@
+<tr>
+<td><%= get_library_title prets['succursale'] %></td>
+<td class="titre"><%= link_to prets['titre'], '/catalog/'+prets['titn'] %></td>
+<td><%= date_in_french prets['date_pret'] %></td>
+<td><%= date_in_french prets['date_retour'] %></td>
+<td><%= prets['nb_renouvellement'] %></td>
+<% if ( @user.renew_authorization( prets['barcode'], prets['nb_renouvellement'])) %>
+<td><%= button_to "Renouveler le prêt", :action=>"renew_loan", :controller=>"user", :barcode => prets['barcode'] %></td>
+<% end %>
+</tr>
+

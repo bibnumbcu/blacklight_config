@@ -1,0 +1,22 @@
+<% @page_title = "Formulaire d'identification' - #{application_name}" %>
+<h1>Formulaire d'identification</h1>
+<div id="auth_form">
+<ul id="infos">
+<li>Entrez votre numéro de carte comme code lecteur.</li>
+<li>Votre mot de passe se compose des quatre premiers chiffres de votre date de naissance (ex : 1305 pour le 13 mai).</li>
+</ul>
+<%= form_tag do %>
+<p>
+<label for="login">Code lecteur :</label>
+<%= text_field_tag :login, params[:login] %>
+</p>
+<p>
+<label for="password">Mot de passe :</label>
+<%= password_field_tag :password, params[:password] %>
+</p>
+<p>
+<%= submit_tag "Connexion" %>
+</p>
+<% end %>
+</div>
+
