@@ -1,0 +1,15 @@
+Bonjour Raphaële,
+voici une demande de suggestion d'achat du lecteur :
+<%= @user.first_name %> <%= @user.name %>
+Email : <%= @user_email %>
+Code lecteur : <%= @user.user_id %>
+
+L'ouvrage demandé est le suivant :
+Titre : <%= @book.title %>
+Auteur : <%= @book.author %>
+Éditeur : <%= @book.publisher %>
+Année de publication : <%= @book.pub_date %>
+Isbn : <%= @book.isbn %>
+Note : <%= @book.note %>
+
+Destinataire : <%=  get_library_title @recipient %>

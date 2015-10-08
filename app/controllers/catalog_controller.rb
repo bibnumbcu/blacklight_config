@@ -1,18 +1,34 @@
 # -*- encoding : utf-8 -*-
-require 'blacklight/catalog'
-
 class CatalogController < ApplicationController  
+  include Blacklight::Marc::Catalog
 
   include Blacklight::Catalog
 
   configure_blacklight do |config|
-    ## Default parameters to send to solr for all search-like requests. See also SolrHelper#solr_search_params
+    ## Default parameters to send to solr for all search-like requests. See also SearchBuilder#processed_parameters
     config.default_solr_params = { 
       :qt => 'search',
       :rows => 10 
     }
+    
+    
+     #parametres pour le plugin de recherche avancée
+    config.advanced_search = { 
+     :qt => 'advanced',
+     :form_solr_parameters => {
+       "facet.field" => ["format", "localisation_facet","language_facet"],
+       "facet.limit" => -1, # return all facet values
+       "facet.sort" => "index" # sort by byte order of values
+      }
+   }
+   
+    # solr path which will be added to solr base url before the other solr params.
+    #config.solr_path = 'select' 
+    
+    # items to show per page, each number in the array represent another option to choose from.
+    #config.per_page = [10,20,50,100]
 
-    ## Default parameters to send on single-document requests to Solr. These settings are the Blackligt defaults (see SolrHelper#solr_doc_params) or 
+    ## Default parameters to send on single-document requests to Solr. These settings are the Blackligt defaults (see SearchHelper#solr_doc_params) or
     ## parameters included in the Blacklight-jetty document requestHandler.
     #
     #config.default_document_solr_params = {
@@ -24,13 +40,12 @@ class CatalogController < ApplicationController
     #}
 
     # solr field configuration for search results/index views
-    config.index.show_link = 'title_display'
-    config.index.record_display_type = 'format'
+    config.index.title_field = 'title_display'
+    config.index.display_type_field = 'format'
 
     # solr field configuration for document/show views
-    config.show.html_title = 'title_display'
-    config.show.heading = 'title_display'
-    config.show.display_type = 'format'
+    #config.show.title_field = 'title_display'
+    #config.show.display_type_field = 'format'
 
     # solr fields that will be treated as facets by the blacklight application
     #   The ordering of the field names is the order of the display
@@ -51,21 +66,21 @@ class CatalogController < ApplicationController
     #
     # :show may be set to false if you don't want the facet to be drawn in the 
     # facet bar
-    config.add_facet_field 'format', :label => 'Type de document', :limit => 5
-    #    config.add_facet_field 'pub_date', :label => 'Année de publication', :query => {
-    #       :years_5 => { :label => 'Moins de 5 ans', :fq => "pub_date:[#{Time.now.year - 5 } TO *]" },
-    #       :years_10 => { :label => 'Moins de 10 ans', :fq => "pub_date:[#{Time.now.year - 10 } TO *]" },
-    #       :years_25 => { :label => 'Moins 25 ans', :fq => "pub_date:[#{Time.now.year - 25 } TO *]" }
-    #    }
-    config.add_facet_field 'pub_date', :label => 'Année de publication', :range => true 
+    config.add_facet_field 'format', :label => 'Type de document', :limit => 6, :collapse => false
+   config.add_facet_field 'pub_date', :label => 'Année de publication', :query => {
+       :years_5 => { :label => 'Moins de 5 ans', :fq => "pub_date:[#{Time.now.year - 5 } TO *]" },
+       :years_10 => { :label => 'Moins de 10 ans', :fq => "pub_date:[#{Time.now.year - 10 } TO *]" },
+       :years_25 => { :label => 'Moins 25 ans', :fq => "pub_date:[#{Time.now.year - 25 } TO *]" }
+    }, :collapse => false
+    config.add_facet_field 'localisation_facet', :label => 'Localisation', :limit => 25, :collapse => false
+#    config.add_facet_field 'pub_date', :label => 'Année de publication', :range => true 
     config.add_facet_field 'subject_topic_facet', :label => 'Thème', :limit => 20 
     config.add_facet_field 'language_facet', :label => 'Langue', :limit => 10
     config.add_facet_field 'author_facet', :label => 'Auteur', :limit => 10
     config.add_facet_field 'fond_particulier_facet', :label => 'Fonds spécialisés', :limit => 10
-    config.add_facet_field 'localisation_facet', :label => 'Localisation', :limit => 25
     config.add_facet_field 'subject_geo_facet', :label => 'Région', :limit => 10
     config.add_facet_field 'subject_era_facet', :label => 'Période', :limit => 10
-#    config.add_facet_field 'example_pivot_field', :label => 'Pivot Field', :pivot => ['format', 'language_facet']
+#    config.add_facet_field 'pivot_facet', :label => 'Pivot Field', :pivot => ['format', 'pivot_facet']
 
     # Have BL send all facet field names to Solr, which has been the default
     # previously. Simply remove these lines if you'd rather use Solr request
@@ -74,46 +89,47 @@ class CatalogController < ApplicationController
 
     # solr fields to be displayed in the index (search results) view
     #   The ordering of the field names is the order of the display 
-    config.add_index_field 'author_display', :label => 'Auteur :', :helper_method => :helper_author_method
-    config.add_index_field 'published_display', :label => 'Publication :'
-    config.add_index_field 'format', :label => 'Type de document :'
-    config.add_index_field 'volume_display', :label => 'Volume :'
+    config.add_index_field 'author_display', :label => 'Auteur ', :helper_method => :helper_author_method
+    config.add_index_field 'published_display', :label => 'Publication '
+    config.add_index_field 'format', :label => 'Type de document '
+    config.add_index_field 'volume_display', :label => 'Volume '
 
     # solr fields to be displayed in the show (single result) view
     #   The ordering of the field names is the order of the display 
-    config.add_show_field 'author_display', :label => 'Auteur :' , :helper_method => :helper_author_method
-    config.add_show_field 'titres_associes_display', :label => 'Titre associé :'
-    config.add_show_field 'subtitle_display', :label => 'Sous-titre :'
-    config.add_show_field 'volume_display', :label => 'Volume :'
-    config.add_show_field 'edition_display', :label => 'Edition :'
-    config.add_show_field 'maths_display', :label => 'Note :'
-    config.add_show_field 'series_display', :label => 'Note :'
-    config.add_show_field 'music_display', :label => 'Note :'
-    config.add_show_field 'informatique_display', :label => 'Note :'
-    config.add_show_field 'published_display', :label => 'Publication :'
-    config.add_show_field 'fond_particulier_display', :label => 'Fonds spécialisés :'
-    config.add_show_field 'material_type_display', :label => 'Description :', :helper_method => :helper_description_method
-    config.add_show_field 'title_series_t', :label => 'Collection :', :helper_method => :helper_title_series_method
-    config.add_show_field 'notes_display', :label => 'Note :', :helper_method => :helper_notes_method
-    config.add_show_field 'resume_display', :label => 'Résumé :', :helper_method => :helper_notes_method
-    config.add_show_field 'notes_these_display', :label => 'Thèse :', :helper_method => :helper_notes_method
-    config.add_show_field 'contenu_display', :label => 'Contenu :', :helper_method => :helper_notes_method
-    config.add_show_field 'numeros_speciaux_display', :label => 'Numéros spéciaux :', :helper_method => :helper_champ400_method
-    config.add_show_field 'url_fulltext_display', :label => 'URL :', :helper_method => :helper_url_fulltext_method
-    config.add_show_field 'url_suppl_display', :label => 'Plus de détails :'
-    config.add_show_field 'isbn_t', :label => 'ISBN :'
-    config.add_show_field 'issn_t', :label => 'ISSN :'
-    config.add_show_field 'language_facet', :label => 'Langue :'
-    config.add_show_field 'format', :label => 'Type de document :' 
-    config.add_show_field 'subject_topic_display', :label => 'Thèmes :', :helper_method => :helper_theme_method
-    config.add_show_field 'subject_era_facet', :label => 'Période :'
-    config.add_show_field 'subject_geo_facet', :label => 'Localisation :'
-    config.add_show_field 'revue_parente_display', :label => 'Revue parente :', :helper_method => :helper_revue_parente_method
-    config.add_show_field 'titre_compl_t', :label => 'Titres complémentaires :', :helper_method => :helper_champ400_method
-    config.add_show_field 'titre_prec_t', :label => 'Titres précédents :', :helper_method => :helper_champ400_method
-    config.add_show_field 'titre_suiv_t', :label => 'Titres suivants :', :helper_method => :helper_champ400_method
-    config.add_show_field 'periodiques_display', :label => 'Numéros disponibles :', :helper_method => :helper_multiligne_method
-    
+    config.add_show_field 'author_display', :label => 'Auteur ' , :helper_method => :helper_author_method
+    config.add_show_field 'titres_associes_display', :label => 'Titre associé '
+    config.add_show_field 'subtitle_display', :label => 'Sous-titre '
+    config.add_show_field 'volume_display', :label => 'Volume '
+    config.add_show_field 'edition_display', :label => 'Edition '
+    config.add_show_field 'maths_display', :label => 'Note '
+    config.add_show_field 'series_display', :label => 'Note '
+    config.add_show_field 'music_display', :label => 'Note '
+    config.add_show_field 'informatique_display', :label => 'Note '
+    config.add_show_field 'published_display', :label => 'Publication '
+    config.add_show_field 'fond_particulier_display', :label => 'Fonds spécialisés '
+    config.add_show_field 'material_type_display', :label => 'Description ', :helper_method => :helper_description_method
+    config.add_show_field 'title_series_t', :label => 'Collection ', :helper_method => :helper_title_series_method
+    config.add_show_field 'notes_display', :label => 'Note ', :helper_method => :helper_notes_method
+    config.add_show_field 'resume_display', :label => 'Résumé ', :helper_method => :helper_notes_method
+    config.add_show_field 'notes_these_display', :label => 'Thèse ', :helper_method => :helper_notes_method
+    config.add_show_field 'contenu_display', :label => 'Contenu ', :helper_method => :helper_notes_method
+    config.add_show_field 'numeros_speciaux_display', :label => 'Numéros spéciaux ', :helper_method => :helper_champ400_method
+    config.add_show_field 'url_fulltext_display', :label => 'URL ', :helper_method => :helper_url_fulltext_method
+    config.add_show_field 'url_suppl_display', :label => 'Plus de détails '
+    config.add_show_field 'isbn_t', :label => 'ISBN '
+    config.add_show_field 'issn_t', :label => 'ISSN '
+    config.add_show_field 'language_facet', :label => 'Langue '
+    config.add_show_field 'format', :label => 'Type de document ' 
+    config.add_show_field 'subject_topic_display', :label => 'Thèmes ', :helper_method => :helper_theme_method
+    config.add_show_field 'subject_era_facet', :label => 'Période '
+    config.add_show_field 'subject_geo_facet', :label => 'Région '
+    config.add_show_field 'revue_parente_display', :label => 'Revue parente ', :helper_method => :helper_revue_parente_method
+    config.add_show_field 'titre_compl_t', :label => 'Titres complémentaires ', :helper_method => :helper_champ400_method
+    config.add_show_field 'titre_prec_t', :label => 'Titres précédents ', :helper_method => :helper_champ400_method
+    config.add_show_field 'titre_suiv_t', :label => 'Titres suivants ', :helper_method => :helper_champ400_method
+    config.add_show_field 'periodiques_display', :label => 'Numéros disponibles ', :helper_method => :helper_multiligne_method
+
+
     # "fielded" search configuration. Used by pulldown among other places.
     # For supported keys in hash, see rdoc for Blacklight::SearchFields
     #
@@ -138,6 +154,10 @@ class CatalogController < ApplicationController
     # Now we see how to over-ride Solr request handler defaults, in this
     # case for a BL "search field", which is really a dismax aggregate
     # of Solr search fields. 
+    config.add_search_field("isbn") do |field|
+      field.include_in_simple_select = false
+      field.solr_parameters = { :qf => "isbn_t" }        
+    end
     
     config.add_search_field('titre') do |field|
       # solr_parameters hash are sent to Solr as ordinary url query params. 
@@ -160,7 +180,7 @@ class CatalogController < ApplicationController
         :pf => '$author_pf'
       }
     end
-    
+
     # Specifying a :qt only to show it's possible, and so our internal automated
     # tests can test it. In this case it's the same as 
     # config[:default_solr_parameters][:qt], so isn't actually neccesary. 
@@ -172,6 +192,11 @@ class CatalogController < ApplicationController
         :pf => '$subject_pf'
       }
     end
+    
+    config.add_search_field("date de publication") do |field|
+      field.include_in_simple_select = false
+      field.solr_parameters = { :qf => "pub_date" }        
+   end
 
     # "sort results by" select (pulldown)
     # label in pulldown is followed by the name of the SOLR field to sort by and
@@ -187,51 +212,50 @@ class CatalogController < ApplicationController
     config.spell_max = 5
   end
 
-# surcharge de la méthode index pour l'affichage des nouveautés sur la page d'accueil
+ # surcharge de la méthode index pour l'affichage des nouveautés sur la page d'accueil
     # get search results from the solr index
     def index
-      
       (@response, @document_list) = get_search_results
       @filters = params[:f] || []
-      
+
       #pour l'affichage des nouveautes
       localisation_values = facets_from_request ['localisation_facet']
       if !localisation_values[0].items.empty?
         @succursale = nil #||= localisation_values[0].items[0].value
         @succursale = CGI.unescape(params[:id]) if !params[:id].nil?
-        month = Time.now.month - 1
+        month = Time.now.month
+        month = month - 1 if month > 1
+        month = 12 if month == 1
         month = month.to_s
         month = '0' + month if month.length() == 1
         day = Time.now.day.to_s
         day = '0' + day if day.length() == 1
-        modif_date = Time.now.year.to_s + month + day
-        query = "pub_date:[#{Time.now.year - 3} TO *] AND modif_date:[#{modif_date} TO *]" 
-        (@response_nouv, @document_list_nouv) = get_search_results( {:qt => "advanced", :q => query, :f => {:localisation_facet => @succursale}}, { :sort=>"modif_date_sort desc", :rows => 50})
+        
+        year = Time.now.year
+        year = year - 1 if month == '12'
+        modif_date = year.to_s + month + day
+        
+      
+        query = "modif_date:[#{modif_date} TO *] pub_date:[#{Time.now.year - 3} TO *]"
+#        blacklight_config.qt = "advanced"
+#        Rails.logger.debug 'Bug0409123613h31 : ' + query.inspect
+        (@response_nouv, @document_list_nouv) = get_search_results({:qt => 'advanced', :q => query, :f => {:localisation_facet => @succursale}}, { :defType => "lucene", :sort=>"modif_date_sort desc", :rows => 50})
+
+
       end
       
       respond_to do |format|
-        format.html { 
-          extra_head_content << view_context.auto_discovery_link_tag(:rss, url_for(params.merge(:format => 'rss')), :title => t('blacklight.search.rss_feed') )
-          extra_head_content << view_context.auto_discovery_link_tag(:atom, url_for(params.merge(:format => 'atom')), :title => t('blacklight.search.atom_feed') )
-          save_current_search_params
-        }
+        format.html { }
         format.rss  { render :layout => false }
         format.atom { render :layout => false }
-
-        
         format.json do
-          facet = facets_from_request.as_json.each do |f|
-            f["label"] = facet_configuration_for_field(f["name"]).label
-            f["items"] = f["items"].as_json.each do |i|
-              i['label'] ||= i['value']
-            end
-          end 
-
-          render json: {response: {docs: @document_list, facets: facet, pages: pagination_info(@response)}}
+          render json: render_search_results_as_json
         end
+
+        additional_response_formats(format)
       end
     end
-    
+  
    # surcharge de la méthode show du module catalog de blacklight
    def show
       @response, @document = get_solr_response_for_doc_id
@@ -253,6 +277,4 @@ class CatalogController < ApplicationController
         
       end
    end
-
-
 end 

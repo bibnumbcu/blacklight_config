@@ -1,0 +1,18 @@
+Bonjour <%= @user.first_name %> <%= @user.name %>,
+Votre demande de suggestion a été envoyée à nos bibliothécaires avec les informations suivantes :
+
+Code lecteur : <%= @user.user_id %>
+Email : <%= @email %>
+Titre : <%= @book.title %>
+Auteur : <%= @book.author %>
+Éditeur : <%= @book.publisher %>
+Année de publication : <%= @book.pub_date %>
+Isbn : <%= @book.isbn %>
+Note : <%= @book.note %>
+
+Destinataire : <%=  get_library_title @recipient %>
+
+
+Nous vous tenons informé de votre demande dans les meilleurs délais.
+
+

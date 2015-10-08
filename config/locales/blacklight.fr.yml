@@ -1,12 +1,4 @@
 fr:
-  active_record:
-    models:
-      feedback: 'Vos réactions'
-    attributes:
-      feedback:
-        name: 'Votre nom'
-        email: 'Votre courriel'
-        message: 'Votre message'
   views:
     pagination:
       first: '&laquo; Première'
@@ -25,7 +17,7 @@ fr:
     header_links:
       login: 'Mon compte'
       logout: 'Me déconnecter'
-      bookmarks: 'Favoris'
+      bookmarks: 'Mon panier'
       saved_searches: 'Mes recherches'
       search_history: 'Historique de recherche'
 
@@ -34,13 +26,11 @@ fr:
     or: 'ou'
 
     bookmarks:
-      collection:
-        add:
-          button: 'Favoris'
       title: 'Favoris'
-      no_bookmarks: 'Accédez à votre compte pour conserver des favoris'
+      page_title: 'Favoris - %{application_name}'
+      no_bookmarks: 'Accédez à votre compte pour conserver des références dans votre panier'
       add:
-        button: 'Favoris'
+        button: 'Panier'
         success:
           one: 'Favori bien enregistré.'
           other: 'Favoris bien enregistrés.'
@@ -59,26 +49,6 @@ fr:
       list_title: 'Vos favoris'
       delete: 'Supprimer'
 
-    feedback:
-      valid_name: 'Vous devez saisir votre nom.'
-      valid_email: 'Vous devez saisir votre courriel.'
-      need_message: 'Vous devez saisir un message.'
-      submit: 'Envoyer'
-      errors:
-        title: 'Veuillez corriger les erreurs suivantes :'
-      complete:
-        title: 'Merci pour vos remarques.'
-
-    folder:
-      title: 'Favoris'
-      add:
-        success: '%{title} a bien été sélectionné.'
-      remove:
-        success: '%{title} a bien été supprimé.'
-      clear:
-        success: 'Favoris supprimés.'
-      no_folder: 'Vous n''avez pas de favoris'
-
     saved_searches:
       add:
         success: 'Votre recherche a bien été sauvegardée.'
@@ -92,6 +62,7 @@ fr:
         success: 'Recherches effacées.'
         failure: 'Un problème est survenu lors de la suppression.'
       title: 'Recherches sauvegardées'
+      page_title: 'Recherches sauvegardées - %{application_name}'
       need_login: 'Veuillez vous connecter pour accéder à vos recherches.'
       no_searches: 'Vous n''avez sauvegardé aucune recherche.'
       list_title: 'Vos recherches'
@@ -104,6 +75,7 @@ fr:
         success: 'Votre historique de recherche a bien été effacé.'
         failure: 'Un problème est survenu lors de la suppression.'
       title: 'Historique de recherche'
+      page_title: 'Historique de recherche - %{application_name}'
       no_history: 'Il n''y a aucun historique en cours.'
       recent: 'Dernières recherches'
       forget: 'Supprimer'
@@ -111,12 +83,11 @@ fr:
 
     tools:
       title: 'Outils'
-      cite: 'Citer'
+      citation: 'Citer'
       endnote: 'Exporter vers EndNote ou Zotero'
       refworks: 'Exporter vers Refworks'
       email: 'Envoyer'
       sms: 'SMS'
-      librarian_view: 'Vue UNIMARC'
       clear: 'Effacer'
 
     citation:
@@ -174,14 +145,19 @@ fr:
     back_to_bookmarks: 'Retour aux favoris'
 
     search:
+      # i18n key 'title' is deprecated and will be removed in Blacklight 6.0
       title: '%{application_name} Résultats de recherche'
+      page_title:
+        title: '%{constraints} - %{application_name} Résultats de recherche'
+        constraint: '%{label}: %{value}'
+        many_constraint_values: '%{values} sélectionné'
       search_results_header: 'Recherche'
       search_results: 'Résultats de recherche'
       errors:
         request_error: "Pardon, nous n'avons pas compris votre recherche."
         invalid_solr_id: "Vous avez demandé une notice qui n'existe pas."
       per_page:
-        label: '%{count}<span class="hide-text"> par page</span>'
+        label: '%{count}<span class="sr-only"> par page</span>'
         button_label: '%{count} par page'
         title: 'Nombre de résultats à afficher par page'
         submit: 'mettre à jour'
@@ -193,7 +169,11 @@ fr:
           label: 'dans'
           title: 'Options de recherche'
         post_label: 'pour'
+        # i18n key 'q' is deprecated and will be removed in Blacklight 6.0, use 'search.label' and 'search.placeholder'
         q: 'Rechercher '
+        search:
+          label: 'Rechercher'
+          placeholder: 'Rechercher'
         submit: 'Chercher'
       pagination:
         title: 'Navigation dans les résultats'
@@ -209,15 +189,17 @@ fr:
       documents:
         counter: '%{counter}. '
       folder:
-        select: 'Favoris'
-        unselect: 'Favoris'
+        select: 'Panier'
+        unselect: 'Panier'
       facets:
         title: 'Limiter votre recherche'
         sort:
           count: 'Du + au - fréquent'
           index: 'Tri de A à Z'
         count: '%{number}'
+        # i18n key 'more' is deprecated and will be removed in Blacklight 6.0
         more: 'plus »'
+        more_html: 'plus <span class="sr-only">%{field_name}</span> »'
         selected:
           remove: '[ X ]'
       group:
@@ -228,20 +210,19 @@ fr:
         remove:
           value: 'Supprimer la restriction %{value}'
           label_value: 'Supprimer la restriction %{label}: %{value}'
-      librarian_view:
-        title: 'Vue UNIMARC'
-        leader: 'LABEL %{leader}'
-        empty: 'Pas MARC trouvé.'
       start_over: 'Accueil'
+      index:
+        label: '%{label}:'
       show:
         title: '%{document_title} - %{application_name}'
+        label: '%{label}:'
       rss_feed: 'RSS pour les résultats'
       atom_feed: 'Atom pour les résultats'
       fields:
         default: 'Keyword'
       bookmarks:
-        present: "ajouté aux favoris"
-        absent: "Ajouter aux favoris"
+        present: "Dans panier"
+        absent: "Ajouter au panier"
         inprogress: "En cours"
       zero_results:
         title: "Votre recherche ne correspond à aucune ressource."
@@ -249,6 +230,10 @@ fr:
         use_fewer_keywords: "Utilisez moins de mots-clés pour commencer, puis affiner votre recherche."
         search_fields: "vous avez cherché par %{search_fields}"
         search_everything: "essayez de rechercher tout"
+      view_title: "Affichage: "
+      view:
+        list: "Liste"
+
 
     entry_name:
       default: 'résultat'

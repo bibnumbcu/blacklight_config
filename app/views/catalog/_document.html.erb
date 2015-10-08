@@ -1,12 +1,4 @@
-    <% # container for a single doc -%>
-    <div class="document document-index <%= render_document_class document %>" id="<%= render_index_field_value :document => document, :field => 'ean_t' %>">
-      <%= render :partial => 'document_header', :locals => { :document => document, :document_counter => document_counter } %>
-
-      <%= render_document_partial document, :thumbnail, :document_counter => document_counter %>
-
-      <%# render_disponibilite document.localisations, (render_index_field_value :document => document, :field => 'format') %>
-
-      <% # main container for doc partial view -%>
-      <%= render_document_partial document, :index, :document_counter => document_counter %>
-
-    </div>
+<% # container for a single doc -%>
+<div id="<%= render_index_field_value :document => document, :field => 'ean_t' %>" class="document document-index <%= render_document_class document %>" itemscope itemtype="<%= document.itemtype %>" >
+  <%= render_document_partials document, blacklight_config.view_config(document_index_view_type).partials, :document_counter => document_counter %>
+</div>

@@ -1,15 +1,23 @@
 # -*- encoding : utf-8 -*-
 class User < ActiveRecord::Base
 
+  if Blacklight::Utils.needs_attr_accessible?
+
+    attr_accessible :email, :password, :password_confirmation
+  end
+# Connects this user object to Blacklights Bookmarks. 
+  include Blacklight::User
+  has_many :suggestion, dependent: :restrict
   attr_accessible :email, :password, :password_confirmation if Rails::VERSION::MAJOR < 4
+
 # Connects this user object to Blacklights Bookmarks. 
   include Blacklight::User
 
   validates_uniqueness_of :user_id
   attr_accessible :user_id, :card_number, :name, :first_name, :email, :expir_date, :library, :address1, :address2,
-   :phone1, :phone2, :birthday, :prets, :reservations, :communications, :remember_me
+   :phone1, :phone2, :birthday, :prets, :reservations, :communications, :remember_me, :suggestions
 
-   attr_accessor :card_number,  :expir_date, :library, :address1, :address2,
+  attr_accessor :card_number,  :expir_date, :library, :address1, :address2,
    :phone1, :phone2, :birthday, :prets, :reservations, :communications, :remember_me
 
   @@messages = { 
@@ -35,6 +43,26 @@ class User < ActiveRecord::Base
 
   def password=(password)
       write_attribute(:password, Encryptor.encrypt(password, :key => Cle).force_encoding("ISO-8859-1").encode("UTF-8"))
+  end
+  
+  def suggestions
+      @suggestions = []
+      Suggestion.where(user_id: read_attribute(:user_id)).each{|suggestion|
+         next if suggestion.book_id.nil?
+         book = Book.find(suggestion.book_id) 
+         @suggestions << {
+            :title => book.title,
+            :author => book.author,
+            :publisher => book.publisher,
+            :isbn => book.isbn,
+            :note => book.note,
+            :pub_date => book.pub_date,
+            :status => suggestion.status,
+            :recipient => suggestion.recipient,
+            :created_at => suggestion.created_at
+         }
+      }
+      @suggestions
   end
   
   def assign_attributes(values, options = {})

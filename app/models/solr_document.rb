@@ -21,23 +21,25 @@ class SolrDocument
   # self.unique_key = 'id'
   
   # Email uses the semantic field mappings below to generate the body of an email.
-  SolrDocument.use_extension( Blacklight::Solr::Document::Email )
+  SolrDocument.use_extension( Blacklight::Document::Email )
   
   # SMS uses the semantic field mappings below to generate the body of an SMS email.
-  SolrDocument.use_extension( Blacklight::Solr::Document::Sms )
+  SolrDocument.use_extension( Blacklight::Document::Sms )
 
   # DublinCore uses the semantic field mappings below to assemble an OAI-compliant Dublin Core document
   # Semantic mappings of solr stored fields. Fields may be multi or
-  # single valued. See Blacklight::Solr::Document::ExtendableClassMethods#field_semantics
-  # and Blacklight::Solr::Document#to_semantic_values
+  # single valued. See Blacklight::Document::SemanticFields#field_semantics
+  # and Blacklight::Document::SemanticFields#to_semantic_values
   # Recommendation: Use field names from Dublin Core
-  use_extension( Blacklight::Solr::Document::DublinCore)    
+  use_extension( Blacklight::Document::DublinCore)    
 
 module SolrDocument::Unimarc
      def localisations
       connexion_z3950 = Z3950.new
       connexion_z3950.keyword = '@attr 1=52 ' + id
       resultats = connexion_z3950.search
+#      Rails.logger.debug 'Bug14h46_02 : ' + id.inspect      
+      
       localisations = connexion_z3950.get_localisations(resultats)
      end
      

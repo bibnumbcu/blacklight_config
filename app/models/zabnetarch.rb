@@ -6,7 +6,7 @@ class Zabnetarch
 
     # port 5211 pour prod
     # port 5212 pour test
-   def initialize(ip='192.168.120.232', port='5211')
+   def initialize(ip='192.168.120.249', port='5211')
       @ip = ip
       @port = port
    end   
@@ -235,10 +235,32 @@ class Zabnetarch
    def get_response
       return nil if ! @socket.respond_to?('gets')
       all_data = []
-      while line = socket.gets 
-         all_data << $_
-      end
-      
+#      while line = socket.gets 
+#         all_data << $_
+#      end
+
+#-----------------------------------------------------------------------
+# modification pour AbsysNet 2.0
+#-----------------------------------------------------------------------
+
+	i = 0
+	compteur = 0
+
+	loop do
+	   # on recupere le contenu xml
+	   all_data[i] = socket.gets
+	   # on teste pour voir si il affiche methodResponse si il affiche compteur+1
+	   if (all_data[i] =~ /\/methodResponse(.*)/ )
+	      compteur = compteur + 1
+	   end
+ 
+	   break if (compteur == 2)
+	   i = i+1
+	end      
+
+
+#-----------------------------------------------------------------------
+
       #on supprime la première réponse indiquant le succès de la connexion.
       for i in 0..3
          all_data.shift i

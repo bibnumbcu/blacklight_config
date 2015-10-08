@@ -7,7 +7,7 @@ class UserController < ApplicationController
       if request.post?
 #         reset_session
          session[:user_id] = nil
-         @user = User.authenticate(params[:login], params[:password])   
+         @user = User.authenticate(params[:login], params[:password])
          if @user
             session[:user_id] = @user.user_id
             # this function must be decommented when guest_user is enabled.
@@ -23,7 +23,7 @@ class UserController < ApplicationController
               redirect_to '/user/compte'
             end
          else
-            flash[:notice] = "Utilisateur ou mot de passe invalide"
+            flash[:alert] = "Utilisateur ou mot de passe invalide"
          end
       end
    end
@@ -52,13 +52,13 @@ class UserController < ApplicationController
          barcode = User.clean_barcode( params[:barcode] ) 
 
          if params[:cancel] == '1'
-            flash[:notice] = current_user.cancel_reservation( barcode )
+            flash[:alert] = current_user.cancel_reservation( barcode )
             redirect_to '/user/compte'            
          end
              
          if params[:confirmation] == '1'
             reservation = current_user.reservation( barcode )
-            flash[:notice] = reservation
+            flash[:alert] = reservation
 
             if reservation == 'Votre réservation a été enregistrée'
                redirect_to '/user/compte'
@@ -68,7 +68,7 @@ class UserController < ApplicationController
                redirect_to uri
             end
          elsif params[:confirmation] == '0'
-            flash[:notice] = 'Votre demande a été annulée.'
+            flash[:alert] = 'Votre demande a été annulée.'
             uri = session[:previous_page]
             session[:previous_page] = nil
             redirect_to uri
@@ -83,8 +83,8 @@ class UserController < ApplicationController
             return
       end
       barcode = User.clean_barcode( params[:barcode] )
-      flash[:notice] = current_user.renew_loan( barcode )
-#      Rails.logger.debug 'Bug 1553 : reponse : ' + renew.inspect
+      flash[:alert] = current_user.renew_loan( barcode )
+#     Rails.logger.debug 'Bug 1553 : reponse : ' + renew.inspect
       redirect_to '/user/compte'
    end
    
@@ -100,7 +100,7 @@ class UserController < ApplicationController
         infos[:cote] = params[:cote]
         infos[:cote_suppl] = params[:cote_suppl]
         communication = current_user.communication( infos )
-        flash[:notice] = communication
+        flash[:alert] = communication
 
         if communication == 'Le bulletin de demande a été envoyé'
            redirect_to '/user/compte'
@@ -110,7 +110,7 @@ class UserController < ApplicationController
            redirect_to uri
         end
       elsif params[:confirmation] == '0'
-        flash[:notice] = 'Votre demande a été annulée.'
+        flash[:alert] = 'Votre demande a été annulée.'
         uri = session[:previous_page]
         session[:previous_page] = nil
         redirect_to uri
@@ -118,5 +118,4 @@ class UserController < ApplicationController
         session[:previous_page] = request.referer if session[:previous_page].nil?
       end
    end
-   
 end 

@@ -1,0 +1,88 @@
+<%= form_tag "demande", method: "post", class:"suggestion-form form-horizontal" do %>
+<fieldset>
+<legend>Lecteur</legend>
+  
+      <div class="form-group">
+        <%= label_tag :firstname, "Prénom", class:"col-sm-3 control-label" %>
+        <div class="col-sm-9">
+         <%= text_field_tag :firstname, @user.first_name, class:"form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= label_tag :name, "Nom", class:"col-sm-3 control-label" %>
+        <div class="col-sm-9">
+         <%= text_field_tag :name, @user.name, class:"form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= label_tag :email, "Email", class:"col-sm-3 control-label required" %>
+        <div class="col-sm-9">
+         <%= text_field_tag :email, @user.email, required: 'required', class:"form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= label_tag :card_number, "Numéro de carte lecteur", class:"col-sm-3 control-label" %>
+        <div class="col-sm-9">
+         <%= text_field_tag :card_number , @user.user_id, class:"form-control" %>
+        </div>
+      </div>
+</fieldset>
+
+<fieldset>
+   <legend>Ouvrage suggéré</legend>
+      <div class="form-group">
+        <%= label_tag :title, "Titre", class: "col-sm-3 control-label required" %>
+   
+        <div class="col-sm-9">
+         <%= text_field_tag :title, nil, required: 'required', class:"form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+        <%= label_tag :author, "Auteur", class: "col-sm-3 control-label" %>
+        <div class="col-sm-9">
+         <%= text_field_tag :author, nil, class:"form-control" %>
+        </div>
+      </div>
+      <div class="form-group" >
+        <%= label_tag :publisher, "Editeur", class: "col-sm-3 control-label required" %>
+        <div class="col-sm-9">
+           <%= text_field_tag :publisher, nil, required: 'required', class:"form-control" %>
+        </div>
+      </div>
+      <div class="form-group" >
+        <%= label_tag :pub_date, "Année de publication", class: "col-sm-3 control-label required" %>
+        <div class="col-sm-9">
+          <%= text_field_tag :pub_date, nil, required: 'required', class:"form-control" %>
+        </div>
+      </div>
+      <div class="form-group" >
+        <%= label_tag :isbn, "ISBN", class: "col-sm-3 control-label" %>
+        <div class="col-sm-9">
+          <%= text_field_tag :isbn, nil, class:"form-control" %>
+        </div>
+      </div>
+      <div class="form-group">
+         <%= label_tag :note, "Note", class:"col-sm-3 control-label" %>
+         <div class="col-sm-9">
+            <%= text_area_tag :note, nil, size: "20x6", class:"form-control" %>
+         </div>
+      </div>
+      <div class="form-group">
+         <%= label_tag :recipient, "Destinataire", class:"col-sm-3 control-label" %>
+         <div class="col-sm-9" >
+            <select class="form-control" id="recipient" name="recipient">
+              <option value="1" selected>BU Lettres</option>
+              <option value="5" >BU Sciences</option>
+              <option value="2">BU Droit</option>
+              <option value="6">BU Santé</option>
+            </select>
+         </div>
+      </div>
+</fieldset>
+
+<div class="sort-submit-buttons clearfix">
+   <div class="submit-buttons pull-right">
+      <%= submit_tag "Demander", class:"btn btn-primary" %>
+   </div>
+</div>
+<% end %>

@@ -7,7 +7,7 @@ $(document).ready(function($) {
    var notes = $('.resume');
    if (notes)
     display_notes(notes);
-    
+
    //ajout d'un lien d'impression dans le compte lecteur
    var lector = document.getElementById('compte-lecteur'); 
    if (lector)

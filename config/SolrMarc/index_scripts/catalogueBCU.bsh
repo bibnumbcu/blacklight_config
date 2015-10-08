@@ -5,11 +5,24 @@ import org.solrmarc.marc.MarcImporter;
 import org.solrmarc.tools.SolrMarcIndexerException;
 import org.solrmarc.tools.Utils;
 import org.solrmarc.tools.CallNumUtils;
-
+package com.jmd.test.dej.date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 // define the base level indexer so that its methods can be called from the script.
 // note that the SolrIndexer code will set this value before the script methods are called.
 org.solrmarc.index.SolrIndexer indexer = null;
+
+/*
+public String getSupportBcu(Record record){
+   String field = indexer.getFieldVals(record, "135a", ", ");
+   if (field.length()!=0 )
+      return "En ligne";
+	else
+	   return "Papier";
+}
+*/
 
 /**
  * Fonction "temporaire" pour mettre une majuscule sur chaque nom de fond spécialisé
@@ -37,11 +50,6 @@ public String getPubDateBcu(Record record)
 	return Utils.cleanDate(date);
 }
 
-
-package com.jmd.test.dej.date;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 /*
  *Retourne la date présente dans le champ 005
  */
@@ -272,6 +280,98 @@ public Set getTitreRevueBcu( Record record, String fieldSpec ){
       }
 
      return resultSet;
+}
+
+public Set setPeriodiquesBcu( Record record ){
+   Set resultSet = new LinkedHashSet();
+
+   List field955List = record.getVariableFields("955");
+   List field930List = record.getVariableFields("930");
+   List field995List = record.getVariableFields("995");
+   
+   if (field955List.isEmpty()) return resultSet;
+   
+   Map cotes = new HashMap();
+   for (VariableField fields : field930List){
+      if ( fields == null) continue;
+      StringBuilder buffer = new StringBuilder();
+      Iterator iter = fields.getSubfields().iterator();
+      String cote = "", index = "";
+      while ( iter.hasNext() ) {            
+         Subfield f = iter.next();
+         char code = f.getCode();
+         if ( code == 'a' ){
+            //on stocke la cote du périodique
+            cote = f.getData();
+         }
+         if ( code == '5' ){
+             //on stocke ce champ identique à celui du 955 pour faire la correspondance plus tard
+             index = f.getData();
+         }
+      }
+      cotes.put(index, cote);
+   }
+   
+   Map localisations = new HashMap();
+   String mapName = "rcr_codes_map.properties";
+   String internalMapName = indexer.loadTranslationMap(mapName);
+   Map mapping = indexer.findMap(internalMapName);
+   for (VariableField fields : field995List){
+      if ( fields == null) continue;
+      StringBuilder buffer = new StringBuilder();
+      Iterator iter = fields.getSubfields().iterator();
+      String localisation = "", index = "";
+      while ( iter.hasNext() ) {            
+         Subfield f = iter.next();
+         char code = f.getCode();
+         if ( code == 'a' ){
+            index = mapping.get(f.getData());
+         }
+         if ( code == 'b' ){
+             localisation = f.getData();
+         }
+      }
+      localisations.put(index, localisation);
+   }
+
+   mapName = "rcr_map.properties";
+   internalMapName = indexer.loadTranslationMap(mapName);
+   mapping = indexer.findMap(internalMapName);
+   localMap = "localisation_map.properties";
+   internallocalMap = indexer.loadTranslationMap(localMap);
+   localMapping = indexer.findMap(internallocalMap);
+   for (VariableField fields : field955List){
+      if ( fields == null) continue; 
+
+      StringBuilder buffer = new StringBuilder();
+      Iterator iter = fields.getSubfields().iterator();
+      while ( iter.hasNext() ) {            
+         Subfield f = iter.next();
+         char code = f.getCode();
+         if ( code == '5' ){            
+            index = f.getData().substring(0, 9);
+            
+            //ajout de la localisation
+            buffer.append(mapping.get(index));
+            buffer.append(", ");
+            
+            //ajout de la salle
+            buffer.append(localMapping.get(localisations.get(index)));
+            buffer.append(", ");
+            
+            //ajout de la cote presente dans le 930
+            buffer.append("cote : ");
+            buffer.append(cotes.get(f.getData()));
+         }
+         if ( code == 'r' ){
+            buffer.append(", ");
+            buffer.append(f.getData());
+         }
+      }
+      resultSet.add(buffer.toString());      
+   }
+   
+   return resultSet;
 }
 
 /**

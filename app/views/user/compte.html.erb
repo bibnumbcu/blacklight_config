@@ -57,4 +57,24 @@
 <% else %>
 <span>Vous n'avez aucune demande de communication en cours.</span>
 <% end %>
+
+<h2 id="suggestions">Suggestions d'achat</h2>
+<% if !@user.suggestions.empty? %>
+<table>
+<tr>
+   <td>&Eacute;tat de la demande</td>
+  <td>Titre</td>
+  <td>Auteur</td>
+  <td>&Eacute;diteur</td>
+  <td>Année de publication</td>
+  <td>Isbn</td>
+  <td>Note</td>
+  <td>Destinataire</td>
+  <td>Date de la demande</td>
+</tr>
+<%= render :partial => 'suggestions', :collection => @user.suggestions %>
+</table>
+<% else %>
+<span>Vous n'avez effectué aucune suggestion.</span>
+<% end %>
 </div>

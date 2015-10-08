@@ -1,0 +1,12 @@
+fr:
+  blacklight_advanced_search:
+    all: tous les mots
+    any: un des mots
+    form:
+      title: Recherche avancée
+      search_context: Recherche en cours
+      limit_criteria_heading_html: "<strong>ET</strong> affiner les résultats grâce aux catégories suivantes"
+      query_criteria_heading_html: "Trouver des références qui correspondent à %{select_menu} suivants"
+      sort_label: "Trier par"
+      start_over: "Effacer"
+      search_btn: 'Rechercher'

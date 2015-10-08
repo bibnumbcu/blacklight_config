@@ -7,7 +7,7 @@ class Z3950
 
    # port 2300 pour prod
    # port 2200 pour test
-  def initialize(ip='192.168.120.232', base='abnet_db', port='2300')
+  def initialize(ip='192.168.120.249', base='abnet_db', port='2300')
       @ip = ip
       @base = base
       @port = port
@@ -16,18 +16,33 @@ class Z3950
    
    def search
       resultats = ''
+      tries = 0
       begin
-         ZOOM::Connection.open(url) do |conn|
-            rset = conn.search(@keyword)
-            rset.each_record do |record|
-               resultats += record.xml
-            end
-            conn.search('quit')
+#      Rails.logger.debug 'avant connexion 13h43' + url.inspect
+         connexion = ZOOM::Connection.new()
+         connexion.connect(url)
+         rset = connexion.search(@keyword)
+         rset.each_record do |record|
+            resultats += record.xml
          end
+         connexion.search('quit')
+#         ZOOM::Connection.open(url) do |conn|
+#            rset = conn.search(@keyword)
+#            rset.each_record do |record|
+#            resultats += record.xml
+#            end
+#            conn.search('quit')
+#         end
+#         Rails.logger.debug 'après connexion 13h23' + @keyword.inspect
          resultats.force_encoding("ISO-8859-1").encode("UTF-8")
-      rescue
+      rescue RuntimeError
+         tries += 1
+         retry if tries < 3
+#          Rails.logger.debug 'erreur connexion 13h44' + $!.inspect
          nil
       end
+   
+    
    end
    
    def get_localisations(reponseXML='', current_user=false)
@@ -47,6 +62,7 @@ class Z3950
          resultab = {}
          #pour chaque element fils on récupère les informations d'exemplaire (localisation, salle, cote, empruntable ou non, code barre)
          resultab[:empruntable] = true
+         resultab[:localisation] = ''
          element.each do |field|
             next if !field.respond_to?('elements')
             resultab[:affichable] = field.elements["[@code='g']"].text.strip.downcase if !field.elements["[@code='g']"].nil?
@@ -59,6 +75,8 @@ class Z3950
             resultab[:volume] =  field.elements["[@code='n']"].text if !field.elements["[@code='n']"].nil?
             resultab[:succursale] = field.elements["[@code='m']"].text if !field.elements["[@code='m']"].nil? 
 
+#Rails.logger.debug 'Bug1649 : test : ' + field.elements["[@code='b']"].text.inspect
+      
 #           Rails.logger.debug 'Bug07101400 : test : ' + field.elements["[@code='h']"].nil?.inspect + ' ' + field.elements["[@code='l']"].nil?.inspect
             if !field.elements["[@code='h']"].nil? 
               resultab[:empruntable] = false if !field.elements["[@code='h']"].text.strip.empty?
@@ -94,11 +112,12 @@ class Z3950
          resultab[:communication] = false if !resultab[:empruntable] 
          resultab[:communication] = false if !current_user_authorize
          resultab[:communication] = false if resultab[:succursale]!='1'
-         resultab[:communication] = false if resultab[:succursale]=='1' && resultab[:statut]=='PAS DE PRET' && (resultab[:salle]=='LAFAYETTE S. LECTURE' || resultab[:salle]=='LAFAYET.S.CATALOGUES' || resultab[:salle]=='LAF. S. PERIODIQUES')
-            
-         resultats << resultab if !resultab.empty?
-      end
+         resultab[:communication] = false if resultab[:succursale]=='1' && (resultab[:salle]=='ARCHIVES BASTAIRE' || resultab[:salle]=='LAFAYETTE S. LECTURE' || resultab[:salle]=='LAFAYET.S.CATALOGUES' || resultab[:salle]=='LAF. S. PERIODIQUES')
+             
       
+          resultats << resultab if !resultab.empty?
+      end
+        
       resultats.sort { |a,b| 
          (a[:localisation] <=> b[:localisation]).nonzero? ||
          (b[:cote] <=> a[:cote])

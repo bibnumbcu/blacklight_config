@@ -3,7 +3,7 @@ module UserHelper
   def get_library_title ( succursale )  
    case succursale
       when '1' then answer = 'B.U. LETTRES LAFAYETTE'
-      when '2' then answer = 'B.U. DROIT-SCIENCES ECO.-GESTION'
+      when '2' then answer = 'B.U. Droit, économie, management'
       when '3' then answer = 'Bibliothèque du Patrimoine'
       when '4' then answer = 'B.U. LETTRES GERGOVIA'
       when '5' then answer = 'B.U. SCIENCES & TECHNIQUES'
