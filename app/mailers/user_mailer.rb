@@ -1,15 +1,20 @@
 class UserMailer < ActionMailer::Base
-  default from: "ne-pas-repondre@clermont-universite.fr"
+   
+  default from: "bcu.contact@clermont-universite.fr"
   helper :user
-  
-  def send_suggestion_to_recipient(user, book, recipient, email)
+
+  def send_suggestion_to_recipient(user, book, recipient, email, suggestion_id)
     @user = user
     @book = book
     @recipient = recipient
     @user_email = email
-    to = "raphaele.bussemey@clermont-universite.fr"
+    @suggestion_id = suggestion_id
+#    to = "raphaele.bussemey@clermont-universite.fr"
 #    to = "mathieu.bacault@clermont-universite.fr"
-    mail(to: to, subject: 'Suggestion d\'achat')
+   to = 'bcu.contact@clermont-universite.fr'
+   
+    subject = 'Suggestion d\'achat ' + ApplicationController.helpers.get_library_title(recipient)  
+    mail(to: to, subject: subject )
   end
   
   def send_suggestion_to_lector(user, book, recipient, email)

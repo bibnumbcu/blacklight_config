@@ -71,13 +71,17 @@
          <%= label_tag :recipient, "Destinataire", class:"col-sm-3 control-label" %>
          <div class="col-sm-9" >
             <select class="form-control" id="recipient" name="recipient">
-              <option value="1" selected>BU Lettres</option>
+              <option value="0" selected>Veuillez choisir un destinataire...</option>
+              <option value="1">BU Lettres</option>
               <option value="5" >BU Sciences</option>
               <option value="2">BU Droit</option>
               <option value="6">BU Santé</option>
+              <option value="10">BU ESPE Chamalieres</option>
+              <option value="20">BU ESPE Moulins</option>
             </select>
          </div>
       </div>
+       <input type="hidden" name="suggestion_id" value="Suggestions05112015"> 
 </fieldset>
 
 <div class="sort-submit-buttons clearfix">

@@ -141,7 +141,7 @@ class User < ActiveRecord::Base
   #est-ce que l'utilisateur peut renouveler son prêt
   def renew_authorization ( barcode = '', nb_renouvellement='1')
       return false if ( nb_renouvellement >= '1' || @prets.nil? )
-      libraries = ['1', '2', '4', '5', '6', '7', '9', '10','11', '12', '13', '16', '17', '18','21', '23', '24']
+      libraries = ['1', '2', '4', '5', '6', '7', '9', '10','11', '12', '13', '16', '17', '18', '20', '21', '23', '24']
       renouvelle = false
       @prets.each{ |un_pret|
             renouvelle = true  if ( un_pret['barcode'] == barcode && libraries.include?( un_pret['succursale'] ) )
@@ -154,6 +154,10 @@ class User < ActiveRecord::Base
       
       if barcode =~ /^\d{7}$/
          barcode = '10' + barcode.strip + '0'
+      elsif barcode =~ /^\d{4}$/
+         barcode = '0000' + barcode
+      elsif barcode =~ /^\d{5}$/
+         barcode = '000' + barcode
       else
          barcode = '1' + barcode.strip + '0' 
       end

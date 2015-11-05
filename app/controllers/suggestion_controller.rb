@@ -25,11 +25,11 @@ class SuggestionController < ApplicationController
          suggestion.recipient = params[:recipient]
          suggestion.status = 1
          suggestion.save
-         
+         Rails.logger.debug 'bug params : ' + params.inspect
          #envoi d'un mail
-         UserMailer.send_suggestion_to_recipient(@user, @book, params[:recipient], params[:email]).deliver
+         UserMailer.send_suggestion_to_recipient(@user, @book, params[:recipient], params[:email], params[:suggestion_id]).deliver
          UserMailer.send_suggestion_to_lector(@user, @book, params[:recipient], params[:email]).deliver
-#         Rails.logger.debug 'validation ok 14h55 : ' + test.inspect
+         
          flash[:success] = 'Votre demande a été envoyée à nos services.'
       end
    end

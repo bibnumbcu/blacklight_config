@@ -98,7 +98,7 @@ class Z3950
          current_user_authorize = true  
          current_user_authorize =  current_user.get_this_book( resultab[:barcode] ) if  current_user
          authorized_library = true
-         libraries = ['1', '2', '4', '5', '6', '9', '11', '12', '13', '18', '21', '24']
+         libraries = ['1', '2', '4', '5', '6', '9', '10', '11', '12', '13', '18', '20', '21', '24']
          authorized_library = false if ! libraries.include?( resultab[:succursale] )
          resultab[:reservation] =  true if ( ! resultab[:empruntable] && current_user_authorize && authorized_library )
          
