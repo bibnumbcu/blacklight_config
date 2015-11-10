@@ -2,7 +2,7 @@
 lock '3.4.0'
 
 set :application, "192.168.120.231"
-set :repo_url, 'file://.'
+set :repo_url, 'https://github.com/bibnumbcu/blacklight_config'
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
@@ -32,28 +32,15 @@ set :pty, true
 # set :default_env, { path: "/opt/ruby/bin:$PATH" }
 
 # Default value for keep_releases is 5
-set :keep_releases, 5
-set :repository,  "file://."
-set :branch, "master"
-set :deploy_via, :copy
-set :checkout, 'export'
-set :keep_releases, 5
+set :keep_releases, 10
+#set :repository,  "file://."
+#set :branch, "master"
+#set :deploy_via, :copy
+#set :checkout, 'export'
+#set :keep_releases, 5
 
 
 namespace :deploy do
-   before :deploy, :deploy_from_local_repo
-
-   task :deploy_from_local_repo do
-    set :repo_url,  "file:///tmp/.git"
-    run_locally do
-      execute "tar -zcvf /tmp/repo.tgz .git"
-    end
-    on roles(:all) do
-      upload! '/tmp/repo.tgz', '/tmp/repo.tgz'
-      execute 'tar -zxvf /tmp/repo.tgz -C /tmp'
-    end
-  end
-  
   desc 'Restart application'
   task :restart do
     on roles(:app), in: :sequence, wait: 5 do

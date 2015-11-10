@@ -63,7 +63,7 @@ gem 'mysql2', '0.3.16'
 gem 'marc'
 gem "blacklight_advanced_search", "~> 5.0"
 
-gem "rsolr", "~> 1.0.6"
+gem "rsolr", "~> 1.0.13"
 
 gem "blacklight-marc", "~> 5.0"
 gem 'protected_attributes'

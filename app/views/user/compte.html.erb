@@ -1,7 +1,7 @@
 <% @page_title = "Formulaire d'identification' - #{application_name}" %>
 <h1>Votre compte</h1>
 <div id="compte-lecteur">
-<%= mail_to 'SIGB@clermont-universite.fr', 'Contactez-nous à propos de votre compte lecteur', {:subject => 'Compte lecteur'} %>
+<%= mail_to 'bcu.contact@clermont-universite.fr', 'Contactez-nous à propos de votre compte lecteur', {:subject => 'Compte lecteur'} %>
 <h2>Informations personnelles</h2>
 <div id="infos-lecteur">
 <span>Prénom : </span><p><%= @user.first_name %></p>
