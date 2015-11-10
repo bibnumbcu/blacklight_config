@@ -38,7 +38,7 @@ set :keep_releases, 10
 #set :deploy_via, :copy
 #set :checkout, 'export'
 #set :keep_releases, 5
-
+#set :bundle_flags, '--deployment --verbose'
 
 namespace :deploy do
   desc 'Restart application'
