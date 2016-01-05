@@ -53,7 +53,7 @@ end
 # Use debugger
 # gem 'debugger', group: [:development, :test]
 
-gem 'blacklight', '5.15.0'
+gem 'blacklight', '5.16.3'
 gem 'encryptor'
 gem 'zoom', '~>0.5'
 #gem 'zoom', :git => 'https://github.com/bricestacey/ruby-zoom.git'

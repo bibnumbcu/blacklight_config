@@ -178,14 +178,15 @@ class Zabnetarch
    
    #demande qui lance l'impression d'un bulletin.
    def communication (login, password, params=nil)
-      query='PETICION|' + login + '|' + User.get_decrypted_password(password) + '|' + params[:barcode] + '|' + '1'
+#      query='PETICION|' + login + '|' + User.get_decrypted_password(password) + '|' + params[:barcode] + '|' + '1'
+      query='PETICION|' + login + '|' + User.get_decrypted_password(password) + '|' + params[:barcode] + '|' + params[:impression]
       send query
       responseXML = get_response
       
       doc = REXML::Document.new(responseXML)
       rootXML = doc.root
 
-#      Rails.logger.debug 'BUG-zabnetarch 1633 : reponse : ' + params.inspect
+      Rails.logger.debug 'BUG-zabnetarch communication 15h10 : reponse : ' + responseXML.inspect
 
       response = {}
       response[:status] = rootXML.elements["fault/value"].text if !rootXML.elements["fault/value"].nil? 

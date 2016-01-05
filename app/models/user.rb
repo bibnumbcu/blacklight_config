@@ -25,6 +25,7 @@ class User < ActiveRecord::Base
                'COPIA_PRESTADA' => 'Cet exemplaire n\'est pas disponible pour le moment à la réservation.',
                'COPIA_NO_EXISTE' => 'Cet exemplaire n\'existe pas.',
                'COPIA_NO_EN_CIRCULACION' => 'Cet exemplaire est déjà réservé plusieurs fois.',
+               'COPIA_NO_VALIDA' => 'Cet exemplaire n\'existe pas.',
                'LECTOR_ERROR' => 'Vous avez des prêts en retard et ne pouvez pas réserver cet exemplaire.',
                'LECTOR_CADUCADO' => 'Vous ne pouvez pas renouveler car vous avez dépassé la date de retour ou votre carte est momentanément suspendue.',
                'LECTOR_NO_EXISTE' => 'La demande de communication a été annulée en raison d\'une erreur sur le compte lecteur.',
@@ -111,10 +112,12 @@ class User < ActiveRecord::Base
   
   def communication params=nil
       connexion_zabnetarch = Zabnetarch.new 
-      return false if !connexion_zabnetarch.connect 
+      return false if !connexion_zabnetarch.connect
       params[:name] = read_attribute(:name)
       params[:first_name] = read_attribute(:first_name)
+      
       reponse = connexion_zabnetarch.communication( User.get_card_number_from_user_id(read_attribute(:user_id)), read_attribute(:password), params )
+#      Rails.logger.debug 'Reponse 15h06 :  ' + reponse.inspect
       connexion_zabnetarch.close
       
       return @@messages['ADMIN_ERROR'] if reponse[:status].nil?
@@ -122,7 +125,13 @@ class User < ActiveRecord::Base
       
       File.open('bulletin.txt', 'w') do |f2|  
         f2.puts reponse[:texte]
-      end 
+      end
+
+#      result = false
+#      result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '1'
+#      result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '6'
+#      result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '16'
+#      return 'Le bulletin de demande a été envoyé' if result
       return 'Le bulletin de demande a été envoyé' if system("lp", "bulletin.txt" )
   end
   
@@ -149,19 +158,15 @@ class User < ActiveRecord::Base
       renouvelle
   end
    
-  def self.clean_barcode (barcode='' )
-      return barcode if barcode =~ /^\d{9}$/      
-      
-      if barcode =~ /^\d{7}$/
-         barcode = '10' + barcode.strip + '0'
-      elsif barcode =~ /^\d{4}$/
-         barcode = '0000' + barcode
-      elsif barcode =~ /^\d{5}$/
-         barcode = '000' + barcode
-      else
-         barcode = '1' + barcode.strip + '0' 
-      end
-      barcode
+  def self.clean_barcode (barcode='', succursale='2' )
+      return barcode if barcode =~ /^\d{9}$/
+      return '0' + barcode + '0' if barcode =~ /^\d{8}$/
+      return '00' + barcode + '0' if barcode =~ /^\d{7}$/
+      return '000' + barcode + '0' if barcode =~ /^\d{6}$/
+      return '0000' + barcode + '0' if barcode =~ /^\d{5}$/
+      return '00000' + barcode + '0' if barcode =~ /^\d{4}$/
+      return '000000' + barcode + '0' if barcode =~ /^\d{3}$/
+      return '0000000' + barcode + '0' if barcode =~ /^\d{2}$/
    end
    
   #renvoie un objet userbcu ou false pour indiquer si l'utilisateur est reconnu par zabnetarch

@@ -108,13 +108,28 @@ class Z3950
          }
          ##############################
          ## droits de communications ##
-         resultab[:communication] = true
-         resultab[:communication] = false if !resultab[:empruntable] 
-         resultab[:communication] = false if !current_user_authorize
-         resultab[:communication] = false if resultab[:succursale]!='1'
-         resultab[:communication] = false if resultab[:succursale]=='1' && (resultab[:salle]=='ARCHIVES BASTAIRE' || resultab[:salle]=='LAFAYETTE S. LECTURE' || resultab[:salle]=='LAFAYET.S.CATALOGUES' || resultab[:salle]=='LAF. S. PERIODIQUES')
-             
-      
+#         resultab[:communication] = true
+#         resultab[:communication] = false if !resultab[:empruntable] 
+#         resultab[:communication] = false if !current_user_authorize
+#         resultab[:communication] = false if resultab[:succursale]!='1'
+#         resultab[:communication] = false if resultab[:succursale]=='1' && (resultab[:salle]=='ARCHIVES BASTAIRE' || resultab[:salle]=='LAFAYETTE S. LECTURE' || resultab[:salle]=='LAFAYET.S.CATALOGUES' || resultab[:salle]=='LAF. S. PERIODIQUES')
+         
+         #1 : lafayette
+         #6 : santé
+         #16 : carnot
+         succursales = ['1', '6', '16']
+         salles_lafayette_excluded = ['ARCHIVES BASTAIRE', 'LAFAYETTE S. LECTURE', 'LAFAYET.S.CATALOGUES', 'LAF. S. PERIODIQUES']
+         salles_sante_authorized = ['MAGASIN : DEMANDER A L\'ACCUEIL']
+         salles_carnot_excluded = ['SALLE A11']
+         resultab[:impression] = '0'
+         if resultab[:empruntable] && current_user_authorize && succursales.include?( resultab[:succursale] )
+            resultab[:impression] = '1' if resultab[:succursale]=='1' && !salles_lafayette_excluded.include?( resultab[:salle] )
+            resultab[:impression] = '6' if resultab[:succursale]=='6' && salles_sante_authorized.include?( resultab[:salle] )
+            resultab[:impression] = '16' if resultab[:succursale]=='16' && !salles_carnot_excluded.include?( resultab[:salle] )
+         end
+         resultab[:communication] = false
+         resultab[:communication] = true if succursales.include?( resultab[:impression] )
+         
           resultats << resultab if !resultab.empty?
       end
         
@@ -123,6 +138,4 @@ class Z3950
          (b[:cote] <=> a[:cote])
       }
  end
-  
-  
 end

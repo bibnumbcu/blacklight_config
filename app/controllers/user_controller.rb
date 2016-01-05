@@ -49,7 +49,7 @@ class UserController < ApplicationController
             redirect_to '/user/compte' 
             return
          end      
-         barcode = User.clean_barcode( params[:barcode] ) 
+         barcode = User.clean_barcode( params[:barcode], params[:succursale] ) 
 
          if params[:cancel] == '1'
             flash[:alert] = current_user.cancel_reservation( barcode )
@@ -82,7 +82,7 @@ class UserController < ApplicationController
             redirect_to '/user/compte' 
             return
       end
-      barcode = User.clean_barcode( params[:barcode] )
+      barcode = User.clean_barcode( params[:barcode], params[:succursale] )
       flash[:alert] = current_user.renew_loan( barcode )
 #     Rails.logger.debug 'Bug 1553 : reponse : ' + renew.inspect
       redirect_to '/user/compte'
@@ -96,10 +96,12 @@ class UserController < ApplicationController
       
       if params[:confirmation] == '1'
         infos = {}
-        infos[:barcode] = User.clean_barcode( params[:barcode] ) 
+        infos[:barcode] = User.clean_barcode( params[:barcode], params[:succursale] ) 
         infos[:cote] = params[:cote]
         infos[:cote_suppl] = params[:cote_suppl]
+        infos[:impression] = params[:impression]
         communication = current_user.communication( infos )
+#        Rails.logger.debug 'Bug 14h56 : infoszabnet : ' + communication.inspect
         flash[:alert] = communication
 
         if communication == 'Le bulletin de demande a été envoyé'
