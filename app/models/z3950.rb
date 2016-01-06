@@ -117,15 +117,16 @@ class Z3950
          #1 : lafayette
          #6 : santé
          #16 : carnot
-         succursales = ['1', '6', '16']
+#         succursales = ['1', '6', '16']
+         succursales = ['1']
          salles_lafayette_excluded = ['ARCHIVES BASTAIRE', 'LAFAYETTE S. LECTURE', 'LAFAYET.S.CATALOGUES', 'LAF. S. PERIODIQUES']
-         salles_sante_authorized = ['MAGASIN : DEMANDER A L\'ACCUEIL']
-         salles_carnot_excluded = ['SALLE A11']
+#         salles_sante_authorized = ['MAGASIN : DEMANDER A L\'ACCUEIL']
+#         salles_carnot_excluded = ['SALLE A11']
          resultab[:impression] = '0'
          if resultab[:empruntable] && current_user_authorize && succursales.include?( resultab[:succursale] )
             resultab[:impression] = '1' if resultab[:succursale]=='1' && !salles_lafayette_excluded.include?( resultab[:salle] )
-            resultab[:impression] = '6' if resultab[:succursale]=='6' && salles_sante_authorized.include?( resultab[:salle] )
-            resultab[:impression] = '16' if resultab[:succursale]=='16' && !salles_carnot_excluded.include?( resultab[:salle] )
+#            resultab[:impression] = '6' if resultab[:succursale]=='6' && salles_sante_authorized.include?( resultab[:salle] )
+#            resultab[:impression] = '16' if resultab[:succursale]=='16' && !salles_carnot_excluded.include?( resultab[:salle] )
          end
          resultab[:communication] = false
          resultab[:communication] = true if succursales.include?( resultab[:impression] )
