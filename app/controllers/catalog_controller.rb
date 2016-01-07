@@ -215,9 +215,8 @@ class CatalogController < ApplicationController
  # surcharge de la méthode index pour l'affichage des nouveautés sur la page d'accueil
     # get search results from the solr index
     def index
-      (@response, @document_list) = get_search_results
-      @filters = params[:f] || []
-
+      (@response, @document_list) = search_results(params, search_params_logic)
+      
       #pour l'affichage des nouveautes
       localisation_values = facets_from_request ['localisation_facet']
       if !localisation_values[0].items.empty?
@@ -239,13 +238,13 @@ class CatalogController < ApplicationController
         query = "modif_date:[#{modif_date} TO *] pub_date:[#{Time.now.year - 3} TO *]"
 #        blacklight_config.qt = "advanced"
 #        Rails.logger.debug 'Bug0409123613h31 : ' + query.inspect
-        (@response_nouv, @document_list_nouv) = get_search_results({:qt => 'advanced', :q => query, :f => {:localisation_facet => @succursale}}, { :defType => "lucene", :sort=>"modif_date_sort desc", :rows => 50})
+        (@response_nouv, @document_list_nouv) = search_results({:qt => 'advanced', :q => query, :f => {:localisation_facet => @succursale}, :defType => 'lucene', :sort => 'modif_date_sort desc', :rows => 50 }, search_params_logic )
 
 
       end
       
       respond_to do |format|
-        format.html { }
+        format.html { store_preferred_view }
         format.rss  { render :layout => false }
         format.atom { render :layout => false }
         format.json do
@@ -253,28 +252,21 @@ class CatalogController < ApplicationController
         end
 
         additional_response_formats(format)
+        document_export_formats(format)
       end
     end
   
    # surcharge de la méthode show du module catalog de blacklight
    def show
-      @response, @document = get_solr_response_for_doc_id
+      @response, @document = fetch params[:id]
 
       @localisations = @document.localisations
       
       respond_to do |format|
-        format.html {setup_next_and_previous_documents}
+        format.html { setup_next_and_previous_documents }
+        format.json { render json: { response: { document: @document } } }
 
-        format.json { render json: {response: {document: @document}}}
-
-        # Add all dynamically added (such as by document extensions)
-        # export formats.
-        @document.export_formats.each_key do | format_name |
-          # It's important that the argument to send be a symbol;
-          # if it's a string, it makes Rails unhappy for unclear reasons. 
-          format.send(format_name.to_sym) { render :text => @document.export_as(format_name), :layout => false }
-        end
-        
+        additional_export_formats(@document, format)
       end
    end
 end 
