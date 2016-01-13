@@ -19,7 +19,7 @@
     <title><%= h(@page_title || application_name) %></title>
    <%= opensearch_description_tag application_name, opensearch_catalog_url(:format => 'xml') %>
     <%= favicon_link_tag asset_path('favicon.ico') %>
-    <%= stylesheet_link_tag    "user-print.css", :media => "print" %>
+    <%= stylesheet_link_tag    "print.css", :media => "print" %>
     <%= stylesheet_link_tag    "application" %>
     <%= javascript_include_tag "application" %>
     <%= csrf_meta_tags %>

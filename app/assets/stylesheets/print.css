@@ -1,7 +1,21 @@
 body{
   font-size: 0.8em;
 }
-.navbar, a, h1,
+
+/* Style d'impression général */
+.navbar,
+.application-heading,
+#sidebar,
+#previousNextDocument,
+.main-flashes {
+display : none;
+}
+
+
+/* Style d'impression pour le compte lecteur */
+#compte-lecteur .navbar, 
+#compte-lecteur a, 
+#compte-lecteur h1,
 #prets, #prets + table, #prets +span,
 #communications, #communications + table, #communications + span,
 #reservations, #reservations + table, #reservations + span
@@ -9,12 +23,12 @@ body{
   display: none;
 }
 
-span{
+#compte-lecteur span{
   display: block;
   margin-top:10px;
   font-weight: bold;
 }
-p{
+#compte-lecteur p{
   display: inline;
   margin-left: 5px;
 }
