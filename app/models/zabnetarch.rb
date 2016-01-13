@@ -67,6 +67,7 @@ class Zabnetarch
                {:label => 'barcode', :field => 'prbarc'}
                ]
       prets = get_XML_fields(rootXML, "DLECTOR/PRESTAMOS/presta", attributes)
+     
       
       #récupération des réservations
       attributes = [

@@ -119,10 +119,20 @@ module ApplicationHelper
       field = args[:document][args[:field]]
       result = ''
       field.each{ |one_line|
-         result += one_line + '<br />' if !one_line.nil?
+         result += one_line + ' <br />' if !one_line.nil?
       }
       
       words = result.split(" ")
+      result= ''
+      words.each{|one_word|
+         result += ' '
+         if one_word =~ /^http:\/\/*/
+            result += '<a href="' + one_word + '">' + one_word + '</a>'
+         else
+            result += one_word
+         end
+      }
+      
       if ( words.length > 50 )
          result = '<span class="resume">'
          result += words.first(50).join(" ")

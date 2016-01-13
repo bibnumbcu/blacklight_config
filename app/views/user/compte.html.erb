@@ -17,6 +17,9 @@
 </div>
 <h2 id="prets">Prêts en cours</h2>
 <% if !@user.prets.empty? %>
+<%
+ @user.prets.sort{|b,a| a['titre']<=>b['titre']
+ }%>
 <table>
 <tr>
   <td>Succursale</td>
