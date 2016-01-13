@@ -4,8 +4,14 @@ body{
 
 /* Style d'impression général */
 .navbar,
-.application-heading,
 #sidebar,
+#header-navbar,
+#search-navbar,
+.application-heading,
+#sortAndPerPage,
+.bookmarksTools,
+.bookmark_toggle,
+.pagination,
 #previousNextDocument,
 .main-flashes {
 display : none;
