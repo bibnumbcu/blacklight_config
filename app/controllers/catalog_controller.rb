@@ -107,8 +107,6 @@ class CatalogController < ApplicationController
     config.add_show_field 'informatique_display', :label => 'Note '
     config.add_show_field 'published_display', :label => 'Publication '
     config.add_show_field 'fond_particulier_display', :label => 'Fonds spécialisés '
-    config.add_show_field 'particularite_exemplaire_display', :label => 'Particularité d\'exemplaire'
-    config.add_show_field 'note_depouillement_display', :label => 'Note de dépouillement '
     config.add_show_field 'material_type_display', :label => 'Description ', :helper_method => :helper_description_method
     config.add_show_field 'title_series_t', :label => 'Collection ', :helper_method => :helper_title_series_method
     config.add_show_field 'notes_display', :label => 'Note ', :helper_method => :helper_notes_method
@@ -130,6 +128,7 @@ class CatalogController < ApplicationController
     config.add_show_field 'titre_prec_t', :label => 'Titres précédents ', :helper_method => :helper_champ400_method
     config.add_show_field 'titre_suiv_t', :label => 'Titres suivants ', :helper_method => :helper_champ400_method
     config.add_show_field 'periodiques_display', :label => 'Numéros disponibles ', :helper_method => :helper_multiligne_method
+    config.add_show_field 'particularite_exemplaire_display', :label => 'Particularités '
 
 
     # "fielded" search configuration. Used by pulldown among other places.
