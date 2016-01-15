@@ -1,4 +1,5 @@
 <% @page_title = "Formulaire d'identification' - #{application_name}" %>
+
 <h1>Votre compte</h1>
 <div id="compte-lecteur">
 <%= mail_to 'bcu.contact@clermont-universite.fr', 'Contactez-nous à propos de votre compte lecteur', {:subject => 'Compte lecteur'} %>
@@ -15,10 +16,11 @@
 <span>Numéro de carte : </span><p><%= @user.card_number %></p>
 <span>Expiration des droits d'inscription au : </span><p><%= date_in_french @user.expir_date %></p>
 </div>
+
 <h2 id="prets">Prêts en cours</h2>
 <% if !@user.prets.empty? %>
 <%
- @user.prets.sort{|b,a| a['titre']<=>b['titre']
+ @user.prets.sort_by!{|a| a['date_retour']
  }%>
 <table>
 <tr>
