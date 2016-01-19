@@ -23,8 +23,8 @@ module ApplicationHelper
       field = args[:document][args[:field]]
       result = ''
       field.each{ |one_line|
-        one_line = one_line.gsub(/br\.|br/i,"Broché") if !one_line.nil?
-        one_line = one_line.gsub(/rel\.|rel/i,"Relié") if !one_line.nil?
+        one_line = one_line.gsub(/^br\.|br$/i,"Broché") if !one_line.nil?
+        one_line = one_line.gsub(/^rel\.|rel$/i,"Relié") if !one_line.nil?
         result += one_line + '<br />'
       }
       raw result
