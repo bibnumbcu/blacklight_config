@@ -98,7 +98,7 @@ class Z3950
          current_user_authorize = true  
          current_user_authorize =  current_user.get_this_book( resultab[:barcode] ) if  current_user
          authorized_library = true
-         libraries = ['1', '2', '4', '5', '6', '9', '10', '11', '12', '13', '18', '20', '21', '24']
+         libraries = ['1', '2', '4', '5', '6', '9', '10', '11', '12', '13', '16', '18', '20', '21', '24']
          authorized_library = false if ! libraries.include?( resultab[:succursale] )
          resultab[:reservation] =  true if ( ! resultab[:empruntable] && current_user_authorize && authorized_library )
          
@@ -108,12 +108,6 @@ class Z3950
          }
          ##############################
          ## droits de communications ##
-#         resultab[:communication] = true
-#         resultab[:communication] = false if !resultab[:empruntable] 
-#         resultab[:communication] = false if !current_user_authorize
-#         resultab[:communication] = false if resultab[:succursale]!='1'
-#         resultab[:communication] = false if resultab[:succursale]=='1' && (resultab[:salle]=='ARCHIVES BASTAIRE' || resultab[:salle]=='LAFAYETTE S. LECTURE' || resultab[:salle]=='LAFAYET.S.CATALOGUES' || resultab[:salle]=='LAF. S. PERIODIQUES')
-         
          #1 : lafayette
          #6 : santé
          #16 : carnot
