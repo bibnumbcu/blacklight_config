@@ -1,3 +1,6 @@
-  INFO [96824f29] Running /usr/bin/env mkdir -p /tmp/192.168.120.231/ as mabacaul@192.168.120.231
- DEBUG [96824f29] Command: /usr/bin/env mkdir -p /tmp/192.168.120.231/
-mabacaul@192.168.120.231's password:
+rake aborted!
+Interrupt: 
+/var/lib/gems/2.1.0/gems/blacklight-marc-5.10.0/lib/railties/solr_marc.rake:37:in ``'
+/var/lib/gems/2.1.0/gems/blacklight-marc-5.10.0/lib/railties/solr_marc.rake:37:in `block (4 levels) in <top (required)>'
+Tasks: TOP => solr:marc:index => solr:marc:index:work
+(See full trace by running task with --trace)

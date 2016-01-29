@@ -419,7 +419,7 @@ public Set getSubjectBcu(Record record, String fieldSpec) {
 
 /** fonction de punctuation pour champs uniques (le resultat est une chaine et pas un ensemble) */
 public String setPunctuation(Record record, String fieldSpec, String separators) {
-   String result = new String();
+   StringBuilder result = new StringBuilder();
    String fieldsSeparator = ":";
    String separatorSeparator = "\\|";
    
@@ -429,53 +429,40 @@ public String setPunctuation(Record record, String fieldSpec, String separators)
    //verification de la conformité des paramètres
    if ( (fields.length - separatorsList.length) != 1)
       System.err.println("Paramètres invalides, il doit y avoir un separateur de moins que de champs");
-
-   String firstField = fields[0].substring(0, 3);
-   String secondField = fields[1].substring(0, 3);
-   DataField firstFieldData = (DataField) record.getVariableField(firstField);
-   DataField secondFieldData = (DataField) record.getVariableField(secondField);
-   String firstSubfieldValue = null;
-   String secondSubfieldValue = null;
    
-   String firstSubfield = fields[0].substring(3);
-   if (firstFieldData != null){
-     Subfield firstSubfieldData = firstFieldData.getSubfield(firstSubfield.charAt(0));  
-     if ( firstSubfieldData != null )
-      firstSubfieldValue = firstSubfieldData.getData(); 
-   }
-   
-   String secondSubfield = fields[1].substring(3);
-   if ( secondFieldData != null ) {
-      Subfield  secondSubfieldData = secondFieldData.getSubfield(secondSubfield.charAt(0));
-      if ( secondSubfieldData != null)
-         secondSubfieldValue = secondSubfieldData.getData();
-   }
-   
-   if ( fields.length == 2 ){
-      //cas final      
-      if ( firstSubfieldValue == null && secondSubfieldValue != null)
-         result = secondSubfieldValue;
-      else if ( secondSubfieldValue == null && firstSubfieldValue != null) 
-         result = firstSubfieldValue;
-      else if ( firstSubfieldValue != null && secondSubfieldValue != null )
-         result = firstSubfieldValue + virgule(separatorsList[0]) + secondSubfieldValue;
-      return result;
-   }
-   else{
-      //cas general
-      String delete = fields[0] + fieldsSeparator ;
-      fieldSpec = fieldSpec.replaceFirst(delete, "");
-      delete = separatorsList[0] + separatorSeparator;
-      separators = separators.replaceFirst(delete, "");
+   for (int i = 0; i < fields.length; i++) {
+      // Check to ensure tag length is at least 3 characters
+      if (fields[i].length() < 3){
+          System.err.println("Invalid tag specified: " + fields[i]);
+          continue;
+      }
       
-      if ( firstSubfieldValue == null && secondSubfieldValue != null)
-         result =  result + setPunctuation(record, fieldSpec, separators);
-      else if ( firstSubfieldValue != null && secondSubfieldValue == null )
-         result =  result + firstSubfieldValue + setPunctuation(record, fieldSpec, separators);
-      else if ( firstSubfieldValue != null && secondSubfieldValue != null )
-         result =  result + firstSubfieldValue + virgule(separatorsList[0]) + setPunctuation(record, fieldSpec, separators);
-      return result;
+      //champ marc
+      String fldTag = fields[i].substring(0, 3);
+      //sous champ marc
+      String subfldTags = fields[i].substring(3);
+      
+      List marcFieldList = record.getVariableFields(fldTag);
+      if (marcFieldList.isEmpty()) continue;
+      
+      for (VariableField fieldsList : marcFieldList) {
+         if ( fields == null) continue; 
+      
+         StringBuilder buffer = new StringBuilder();
+         Iterator iter = fieldsList.getSubfields().iterator();
+         while ( iter.hasNext() ) {
+            Subfield f = iter.next();
+            char code = f.getCode();
+            if (subfldTags.indexOf(code)!=-1){
+               if ((i != 0) && (i < (fields.length)))
+                  buffer.append(virgule(separatorsList[i-1]));
+               buffer.append(f.getData());
+            }
+         }
+         result.append(buffer.toString());      
+      }
    }
+   return result.toString();
    
 }
 
@@ -486,4 +473,40 @@ public String virgule( String separator ){
    if ( separator.equals(":") )
          return " : ";
    return separator;
+}
+
+/** fonction de ponctuation pour le champ title_display */
+public String setTitleDisplay( Record record){
+   List field200List = record.getVariableFields("200");
+   StringBuilder result = new StringBuilder();
+   for (VariableField fields : field200List){
+      if ( fields == null) continue;
+      StringBuilder buffer = new StringBuilder();
+      Iterator iter = fields.getSubfields().iterator();     
+      while ( iter.hasNext() ) {            
+         Subfield f = iter.next();
+         char code = f.getCode();
+         if (code=='a' && result.length()==0){
+            result.append(f.getData());
+         }
+         else if (code=='a' && result.length()>0){
+            result.append(", ");
+            result.append(f.getData());
+         }
+         if (code=='e'){
+            result.append(" : ");
+            result.append(f.getData());
+         }
+         if (code=='h'){
+            result.append(". ");
+            result.append(f.getData());
+         }
+         if (code=='i'){
+            result.append(", ");
+            result.append(f.getData());
+         }
+      }
+      
+   }
+   return result.toString();
 }
