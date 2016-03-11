@@ -23,7 +23,7 @@ class Z3950
          connexion.connect(url)
          rset = connexion.search(@keyword)
          rset.each_record do |record|
-            resultats += record.xml
+            resultats += record.xml if !record.xml.nil?
          end
          connexion.search('quit')
 #         ZOOM::Connection.open(url) do |conn|
