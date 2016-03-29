@@ -39,7 +39,7 @@ set :keep_releases, 10
 #set :checkout, 'export'
 #set :keep_releases, 5
 #set :bundle_flags, '--deployment --verbose'
-
+set :passenger_restart_with_touch, true
 namespace :deploy do
   desc 'Restart application'
   task :restart do

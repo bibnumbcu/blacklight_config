@@ -127,10 +127,10 @@ class User < ActiveRecord::Base
         f2.puts reponse[:texte]
       end
 
-      result = false
-      result = system("lp -d lafhpbdp \"bulletin.txt\"" ) if params[:impression] == '1'
-#      result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '6'
-      result = system("lp -d hpcarnot \"bulletin.txt\"" ) if params[:impression] == '16'
+      result = 'Le bulletin n\'a pas été envoyé. Une erreur s\'est produite'
+#      result = system("lp -d lafhpbdp \"bulletin.txt\"" ) if params[:impression] == '1'
+      result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '1'
+#      result = system("lp -d hpcarnot \"bulletin.txt\"" ) if params[:impression] == '16'
       return 'Le bulletin de demande a été envoyé' if result
 #      return 'Le bulletin de demande a été envoyé' if system("lp", "bulletin.txt" )
   end

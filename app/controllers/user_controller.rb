@@ -101,16 +101,18 @@ class UserController < ApplicationController
         infos[:cote_suppl] = params[:cote_suppl]
         infos[:impression] = params[:impression]
         communication = current_user.communication( infos )
-#        Rails.logger.debug 'Bug 14h56 : infoszabnet : ' + communication.inspect
-        flash[:alert] = communication
-
-        if communication == 'Le bulletin de demande a été envoyé'
-           redirect_to '/user/compte'
-        else
-           uri = session[:previous_page]
-           session[:previous_page] = nil
-           redirect_to uri
-        end
+         flash[:alert] = communication
+         redirect_to '/user/compte'
+#        if communication 
+#           redirect_to '/user/compte'
+#           flash[:alert] = 'Le bulletin de demande a été envoyé'
+#        else
+##           uri = session[:previous_page]
+##           session[:previous_page] = nil
+##           redirect_to uri
+#            
+#            flash[:alert] = 'Le bulletin de demande n\'a été envoyé.'
+#        end
       elsif params[:confirmation] == '0'
         flash[:alert] = 'Votre demande a été annulée.'
         uri = session[:previous_page]
