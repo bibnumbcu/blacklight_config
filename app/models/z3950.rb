@@ -118,7 +118,7 @@ class Z3950
          salles_carnot_excluded = ['SALLE A11']
          resultab[:impression] = '0'
          if resultab[:empruntable] && current_user_authorize && succursales.include?( resultab[:succursale] )
-#            resultab[:impression] = '1' if resultab[:succursale]=='1' && !salles_lafayette_excluded.include?( resultab[:salle] )
+            resultab[:impression] = '1' if resultab[:succursale]=='1' && !salles_lafayette_excluded.include?( resultab[:salle] )
 #            resultab[:impression] = '6' if resultab[:succursale]=='6' && salles_sante_authorized.include?( resultab[:salle] )
             resultab[:impression] = '16' if resultab[:succursale]=='16' && !salles_carnot_excluded.include?( resultab[:salle] )
          end
