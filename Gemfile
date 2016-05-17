@@ -68,3 +68,4 @@ gem "rsolr", "~> 1.0.13"
 
 gem "blacklight-marc", "~> 5.0"
 gem 'protected_attributes'
+gem 'oai', source: "https://rubygems.org"

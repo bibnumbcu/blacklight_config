@@ -10,13 +10,13 @@ class Harvester
             { :field_name => 'dc:contributor', :marc_field => '702a' },
             { :field_name => 'dc:date', :marc_field => '100a' },
             { :field_name => 'dc:date', :marc_field => '210d' },
-#            { :field_name => 'dc:type', :marc_field => '105a' },
+            { :field_name => 'dc:type', :marc_field => '105a' },
             { :field_name => 'dc:format', :marc_field => '106a' },
 #            { :field_name => 'dc:identifier', :marc_field => '856u' },
             { :field_name => 'dc:relation', :marc_field => '856u' },
-#            { :field_name => 'dc:source', :marc_field => '910p' },
+            { :field_name => 'dc:source', :marc_field => '910p' },
             { :field_name => 'dc:language', :marc_field => '101a' },
-#            { :field_name => 'dc:coverage', :marc_field => '607a' },
+            { :field_name => 'dc:coverage', :marc_field => '607a' },
             { :field_name => 'dc:rights', :marc_field => '230a' }
    ]
    
