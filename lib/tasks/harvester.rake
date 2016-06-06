@@ -8,8 +8,8 @@ namespace :harvester do
    
    harvester = Harvester.new(args[:name], args[:url], args[:set])
    harvester.harvest
-#   commandStr = 'rake solr:marc:index MARC_FILE=' + File.expand_path(File.join(Rails.root, 'tmp/moissonnage.mrc'))
-   commandStr = 'cp ' + File.expand_path(File.join(Rails.root, 'tmp/moissonnage.mrc')) + ' /usr/applications/exports/moissonnage.mrc '
+   commandStr = 'rake solr:marc:index MARC_FILE=' + File.expand_path(File.join(Rails.root, 'tmp/moissonnage.mrc'))
+#   commandStr = 'cp ' + File.expand_path(File.join(Rails.root, 'tmp/moissonnage.mrc')) + ' /usr/applications/exports/moissonnage.mrc '
    puts commandStr
    puts
    `#{commandStr}`

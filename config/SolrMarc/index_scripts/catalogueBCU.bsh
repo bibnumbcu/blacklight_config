@@ -191,7 +191,8 @@ public Set getFormatBcu(Record record){
                code.compareToIgnoreCase("as")==0 ||
                code.compareToIgnoreCase("lm")==0 ||
                code.compareToIgnoreCase("ls")==0 ||
-               code.compareToIgnoreCase("rm")==0 )
+               code.compareToIgnoreCase("rm")==0 ||
+               code.compareToIgnoreCase("nm")==0 )
          doublePos = true;
    }
   

@@ -129,6 +129,7 @@ class CatalogController < ApplicationController
     config.add_show_field 'titre_suiv_t', :label => 'Titres suivants ', :helper_method => :helper_champ400_method
     config.add_show_field 'periodiques_display', :label => 'Numéros disponibles ', :helper_method => :helper_multiligne_method
     config.add_show_field 'particularite_exemplaire_display', :label => 'Particularités '
+    config.add_show_field 'url_image_display', :label => 'Vignette ', :helper_method => :helper_vignette_method
 
 
     # "fielded" search configuration. Used by pulldown among other places.

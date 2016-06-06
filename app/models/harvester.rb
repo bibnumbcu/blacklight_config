@@ -8,12 +8,12 @@ class Harvester
             { :field_name => 'dc:subject', :marc_field => '606a' },
             { :field_name => 'dc:publisher', :marc_field => '210c' },
             { :field_name => 'dc:contributor', :marc_field => '702a' },
-            { :field_name => 'dc:date', :marc_field => '100a' },
+            { :field_name => 'dc:date', :marc_field => '100a[8-16]' },
             { :field_name => 'dc:date', :marc_field => '210d' },
-            { :field_name => 'dc:type', :marc_field => '105a' },
-            { :field_name => 'dc:format', :marc_field => '106a' },
-#            { :field_name => 'dc:identifier', :marc_field => '856u' },
-            { :field_name => 'dc:relation', :marc_field => '856u' },
+            { :field_name => 'dc:type', :marc_field => '230a' },
+#            { :field_name => 'dc:format', :marc_field => '106a' },
+            { :field_name => 'dc:identifier', :marc_field => '856u' },
+            { :field_name => 'dc:relation', :marc_field => '856z' },
             { :field_name => 'dc:source', :marc_field => '910p' },
             { :field_name => 'dc:language', :marc_field => '101a' },
             { :field_name => 'dc:coverage', :marc_field => '607a' },
@@ -52,14 +52,14 @@ class Harvester
    reponse.each{|identifier|
       record = MARC::Record.new()
       #données pour le format "Documents numérisés" et le type de document
-      record.leader[6] = 'a'
+      record.leader[6] = 'n'
       record.leader[7] = 'm'
       record << MARC::ControlField.new('001', identifier.header.identifier.gsub('.', ''))
       @@dc_fields.each { |dc_field|
          identifier.metadata.elements.each('oai_dc:dc/'+dc_field[:field_name]){ |element|
             text = element.text
             text = @name if dc_field[:field_name] == 'dc:source'
-            text = 's' if dc_field[:field_name] == 'dc:format'
+#            text = 's' if dc_field[:field_name] == 'dc:format'
             record << MARC::DataField.new(dc_field[:marc_field][0..2], '0', '0', [dc_field[:marc_field][3], text])
          }
       }

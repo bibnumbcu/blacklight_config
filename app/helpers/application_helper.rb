@@ -86,9 +86,17 @@ module ApplicationHelper
       result = ''
       proxy = 'http://sicd.clermont-universite.fr/login?url='
       field.each{ |one_line|
-         one_line = proxy + one_line if one_line =~ /^http:\/\/www\.numilog\.com/
-         result += '<a href="' + one_line + '">' + 'Disponible en ligne' + '</a>' + '<br />' if !one_line.nil?
+         if one_line =~ /^http:\/\/www\.numilog\.com/
+            one_line = proxy + one_line 
+            result += '<a href="' + one_line + '">' + 'Disponible en ligne' + '</a>' + '<br />' if !one_line.nil?
+         end
+         if one_line =~ /^http:\/\/bibliotheque-virtuelle\.clermont-universite\.fr\/items\/show/ 
+            result += '<a href="' + one_line + '">' + one_line + '</a>' + '<br />' if !one_line.nil?
+         end
+#         result += '<a href="' + one_line + '">' + one_line + '</a>' + '<br />' if !one_line.nil?
       }
+   
+      return 'Aucun lien pour ce document' if result==''
       raw result
   end
   
@@ -141,5 +149,14 @@ module ApplicationHelper
          result += '</span>'
       end
       raw result
+  end
+  
+  def helper_vignette_method args
+      vignette = args[:document][args[:field]]
+      if  vignette[0] =~ /^vignette : http:\/\//
+         result = '<img src="'+ vignette[0][11..vignette[0].length] +'"/>'
+         return raw result
+      end
+      return raw vignette
   end
 end
