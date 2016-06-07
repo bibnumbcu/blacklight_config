@@ -164,7 +164,8 @@ module ApplicationHelper
       if  vignette[0] =~ /^vignette : http:\/\//
          result = '<img src="'+ vignette[0][11..vignette[0].length] +'"/>'
          return raw result
+      else
+         return 
       end
-      return raw vignette
   end
 end
