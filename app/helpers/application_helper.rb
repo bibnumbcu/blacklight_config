@@ -86,12 +86,20 @@ module ApplicationHelper
       result = ''
       proxy = 'http://sicd.clermont-universite.fr/login?url='
       field.each{ |one_line|
+         if one_line =~ /^http:\/\/bibliotheque-virtuelle\.clermont-universite\.fr\/items\/show/ 
+            result += '<a href="' + one_line + '">' + one_line + '</a>' + '<br />' if !one_line.nil?
+            next
+         end
+         next if one_line =~ /^http:\/\/bibliotheque-virtuelle\.clermont-universite\.fr\/files\/original/
+         
          if one_line =~ /^http:\/\/www\.numilog\.com/
             one_line = proxy + one_line 
             result += '<a href="' + one_line + '">' + 'Disponible en ligne' + '</a>' + '<br />' if !one_line.nil?
+            next
          end
-         if one_line =~ /^http:\/\/bibliotheque-virtuelle\.clermont-universite\.fr\/items\/show/ 
-            result += '<a href="' + one_line + '">' + one_line + '</a>' + '<br />' if !one_line.nil?
+        
+         if one_line =~ /^(http|https)|:\/\/*/   
+            result += '<a href="' + one_line + '">' + 'Disponible en ligne' + '</a>' + '<br />' if !one_line.nil?
          end
 #         result += '<a href="' + one_line + '">' + one_line + '</a>' + '<br />' if !one_line.nil?
       }
