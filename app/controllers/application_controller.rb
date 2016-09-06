@@ -28,7 +28,13 @@ class ApplicationController < ActionController::Base
    end
    
    def guest_user
-      @guest_user ||= User.find(session[:guest_user_id] ||= create_guest_user.id)
+      if session[:guest_user_id]
+         @guest_user = User.find(session[:guest_user_id])
+      else
+         @guest_user = create_guest_user
+      end
+      session['guest_user_id'] = @guest_user.id
+      @guest_user
    end
 
    private

@@ -37,6 +37,7 @@
   <%= render partial: 'shared/ajax_modal' %>
 
 <!-- /container -->
+   <main role="main">
   <div id="main-container" class="container">
   <%= content_tag :h1, application_name, class: 'sr-only application-heading' %>
   
@@ -46,7 +47,8 @@
       <%= yield %>
     </div>
   </div>
-
+</main>
   <%= render :partial => 'shared/footer' %>
+  
   </body>
 </html>

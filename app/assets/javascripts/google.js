@@ -41,7 +41,7 @@
             if ( bookInfo == null )  return true;    
          
             if (bookInfo.thumbnail_url) {
-              thumbnailHTML = '<img src="' + bookInfo.thumbnail_url + '&zoom=' + zoom + '" class="couverture"/>'; 
+              thumbnailHTML = '<img alt="Vignette de couverture" src="' + bookInfo.thumbnail_url + '&zoom=' + zoom + '" class="couverture"/>'; 
               url = '<a href="' + bookInfo.preview_url  + '" title="Google Books">' + thumbnailHTML + '</a>';
               if (add_element!='index')
                add_element.append(url);
