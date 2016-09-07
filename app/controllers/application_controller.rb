@@ -29,11 +29,16 @@ class ApplicationController < ActionController::Base
    
    def guest_user
       if session[:guest_user_id]
-         @guest_user = User.find(session[:guest_user_id])
+         begin
+            @guest_user = User.find(session[:guest_user_id])
+         rescue ActiveRecord::RecordNotFound
+            @guest_user = create_guest_user
+         end
       else
          @guest_user = create_guest_user
       end
       session['guest_user_id'] = @guest_user.id
+      Rails.logger.debug 'Bug 1109 : reponse : ' + session['guest_user_id'].inspect
       @guest_user
    end
 
