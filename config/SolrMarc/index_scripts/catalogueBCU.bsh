@@ -355,15 +355,21 @@ public Set setPeriodiquesBcu( Record record ){
             
             //ajout de la localisation
             buffer.append(mapping.get(index));
-            buffer.append(", ");
-            
+                        
             //ajout de la salle
-            buffer.append(localMapping.get(localisations.get(index)));
-            buffer.append(", ");
+            String loc = localMapping.get(localisations.get(index));
+            if (loc!=null){
+               buffer.append(", ");
+               buffer.append(loc);
+            }
             
             //ajout de la cote presente dans le 930
-            buffer.append("cote : ");
-            buffer.append(cotes.get(f.getData()));
+            String varcote = cotes.get(f.getData());
+            if (varcote!=null && varcote.length()>0){
+               buffer.append(", ");
+               buffer.append("cote : ");
+               buffer.append(varcote);
+            }
          }
          if ( code == 'r' ){
             buffer.append(", ");
