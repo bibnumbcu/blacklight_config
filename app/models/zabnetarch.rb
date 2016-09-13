@@ -187,7 +187,7 @@ class Zabnetarch
       doc = REXML::Document.new(responseXML)
       rootXML = doc.root
 
-      Rails.logger.debug 'BUG-zabnetarch communication 15h10 : reponse : ' + responseXML.inspect
+#      Rails.logger.debug 'BUG-zabnetarch communication 15h10 : reponse : ' + responseXML.inspect
 
       response = {}
       response[:status] = rootXML.elements["fault/value"].text if !rootXML.elements["fault/value"].nil? 
@@ -199,6 +199,7 @@ class Zabnetarch
          localisation = rootXML.elements["presta/prcocl"].text if !rootXML.elements["presta/prcocl"].nil?
          titre = rootXML.elements["presta/tititu"].text if !rootXML.elements["presta/tititu"].nil?
          response[:texte] = ""
+         response[:texte] += "Lieu de retrait : \t\t\t" + params[:lieu] + "\n" if !params[:lieu].nil?
          response[:texte] += "Nom : \t\t\t" + params[:name] + "\n" if !params[:name].nil? 
          response[:texte] += "Prénom : \t\t" + params[:first_name] + "\n" if !params[:first_name].nil?
          response[:texte] += "Code lecteur : \t\t" + code_lecteur + "\n" if !code_lecteur.nil?

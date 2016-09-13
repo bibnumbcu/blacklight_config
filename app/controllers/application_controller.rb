@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
          @guest_user = create_guest_user
       end
       session['guest_user_id'] = @guest_user.id
-      Rails.logger.debug 'Bug 1109 : reponse : ' + session['guest_user_id'].inspect
+#      Rails.logger.debug 'Bug 1109 : reponse : ' + session['guest_user_id'].inspect
       @guest_user
    end
 

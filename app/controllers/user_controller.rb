@@ -84,22 +84,27 @@ class UserController < ApplicationController
       end
       barcode = User.clean_barcode( params[:barcode], params[:succursale] )
       flash[:alert] = current_user.renew_loan( barcode )
-#     Rails.logger.debug 'Bug 1553 : reponse : ' + renew.inspect
       redirect_to '/user/compte'
    end
    
    def communication
+#      Rails.logger.debug 'Bug 1254 : reponse : ' + params.inspect
       if  params[:barcode].nil?
             redirect_to '/user/compte' 
             return
       end
+      @lafayette = false
+      if params['impression'] == '1'
+         @lafayette = true    
+      end
       
-      if params[:confirmation] == '1'
+      if  params[:submit] == "Envoyer la demande" || params[:confirmation]=='1'
         infos = {}
         infos[:barcode] = User.clean_barcode( params[:barcode], params[:succursale] ) 
         infos[:cote] = params[:cote]
         infos[:cote_suppl] = params[:cote_suppl]
         infos[:impression] = params[:impression]
+        infos[:lieu] = params[:lafayette]
         communication = current_user.communication( infos )
          flash[:alert] = communication
          redirect_to '/user/compte'
@@ -113,7 +118,7 @@ class UserController < ApplicationController
 #            
 #            flash[:alert] = 'Le bulletin de demande n\'a été envoyé.'
 #        end
-      elsif params[:confirmation] == '0'
+      elsif params[:cancel] == 'Annuler' || params[:confirmation]=='0'
         flash[:alert] = 'Votre demande a été annulée.'
         uri = session[:previous_page]
         session[:previous_page] = nil
