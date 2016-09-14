@@ -125,6 +125,11 @@ class User < ActiveRecord::Base
       
       File.open('bulletin.txt', 'w') do |f2|  
         f2.puts reponse[:texte]
+        # impression en deux fois pour faire un fantôme
+        if params[:impression] == '2'
+           f2.puts "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+           f2.puts reponse[:texte] 
+        end
       end
 
       result = 'Le bulletin n\'a pas été envoyé. Une erreur s\'est produite'
