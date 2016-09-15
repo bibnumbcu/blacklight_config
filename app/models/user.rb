@@ -127,7 +127,7 @@ class User < ActiveRecord::Base
         f2.puts reponse[:texte]
         # impression en deux fois pour faire un fantôme
         if params[:impression] == '2'
-           f2.puts "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
+           f2.puts "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
            f2.puts reponse[:texte] 
         end
       end
