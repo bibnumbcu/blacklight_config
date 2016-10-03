@@ -61,6 +61,7 @@ class Harvester
             text = @name if dc_field[:field_name] == 'dc:source'
 #            text = 's' if dc_field[:field_name] == 'dc:format'
             record << MARC::DataField.new(dc_field[:marc_field][0..2], '0', '0', [dc_field[:marc_field][3], text])
+            break if dc_field[:field_name] == 'dc:title'
          }
       }
 #     p record
