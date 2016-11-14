@@ -161,11 +161,10 @@ module ApplicationHelper
   
   def helper_vignette_method args
       vignette = args[:document][args[:field]]
-      if  vignette[0] =~ /^vignette : http:\/\//
-         result = '<img src="'+ vignette[0][11..vignette[0].length] +'"/>'
-         return raw result
-      else
-         return 
-      end
+      result=''
+      vignette.each{|one_line|
+            result = '<img src="'+ one_line[11..one_line.length] +'"/>'  if  one_line =~ /^vignette : http:\/\//
+      }
+      return raw result
   end
 end
