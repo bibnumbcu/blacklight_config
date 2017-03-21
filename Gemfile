@@ -48,7 +48,7 @@ group :development do
     gem 'capistrano-rails'
 #    gem 'capistrano-rbenv', '~> 2.0', require: false
     gem 'capistrano-bundler'
-    gem 'capistrano-passenger'
+#    gem 'capistrano-passenger'
 end
 
 # Use debugger
@@ -69,3 +69,5 @@ gem "rsolr", "~> 1.0.13"
 gem "blacklight-marc", "~> 5.0"
 gem 'protected_attributes'
 gem 'oai', source: "https://rubygems.org"
+
+gem 'passenger'
