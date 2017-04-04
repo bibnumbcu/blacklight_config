@@ -40,10 +40,15 @@ class User < ActiveRecord::Base
   }
 
   #clé pour l'encodage/décodage du mot de passe
+  cipher = OpenSSL::Cipher.new('aes-256-gcm')
+  cipher.encrypt
+  Iv = cipher.random_iv
+  Salt = SecureRandom.random_bytes(16)
   Cle = Digest::SHA256.hexdigest('Pierre qui roule n\'amasse pas mousse.')
+	Encryptor.default_options.merge!(insecure_mode: true, v2_gcm_iv: true)
 
   def password=(password)
-      write_attribute(:password, Encryptor.encrypt(password, :key => Cle).force_encoding("ISO-8859-1").encode("UTF-8"))
+      write_attribute(:password, Encryptor.encrypt(password, :key => Cle, :iv => Iv).force_encoding("ISO-8859-1").encode("UTF-8"))
   end
   
   def suggestions
@@ -206,6 +211,6 @@ class User < ActiveRecord::Base
    
    private
    def self.get_decrypted_password(password)  
-      Encryptor.decrypt(password.encode("ISO-8859-1"), :key => Cle)
+      Encryptor.decrypt(password.encode("ISO-8859-1"), :key => Cle, :iv =>Iv)
    end
 end
