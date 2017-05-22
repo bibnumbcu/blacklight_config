@@ -1,23 +1,4 @@
-<% if @lafayette %>
-   <h1>Où souhaitez-vous recevoir le document ?</h1>
-   <%= form_tag({:controller => 'user', :action => 'communication'}, method: "get") %>
-   
-   <%= radio_button_tag(:lafayette, "Retrait à lafayette",'checked') %>
-   <%= label_tag(:lafayette_label, "à la BU Lafayette du lundi au vendredi") %><br />
-   <%= radio_button_tag(:lafayette, "Retrait à Gergovia") %>
-   <%= label_tag(:gergo_label, "à la BU Gergovia le samedi") %><br />
-   <%= hidden_field_tag('barcode', params[:barcode]) %>
-   <%= hidden_field_tag('cote', params[:cote]) %>
-   <%= hidden_field_tag('impression', params[:impression]) %>
-   <%= hidden_field_tag('cote_suppl', params[:cote_suppl]) %>
-   <p>Pour être servi le samedi à Gergovia votre demande doit être passée avant le vendredi 16h.</p>
-   <%= submit_tag("Annuler", :name => 'cancel') %>
-   <%= submit_tag("Envoyer la demande", :name => 'submit') %>
-<% else %>
-
    <h1>Confirmez-vous la demande de communication de cet exemplaire ?</h1>
    <%= button_to "Non", :action=>"communication", :controller=>"user", :barcode => params[:barcode], :cote => params[:cote] , :impression => params[:impression], :cote_suppl => params[:cote_suppl], :confirmation => 0 %>
    <%= button_to "Oui", :action=>"communication", :controller=>"user", :barcode => params[:barcode], :cote => params[:cote], :impression => params[:impression], :cote_suppl => params[:cote_suppl], :confirmation => 1 %>
    <%= @message %>
-
-<% end %>
