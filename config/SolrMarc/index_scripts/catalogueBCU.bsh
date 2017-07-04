@@ -34,7 +34,7 @@ public String uppercaseBcu(Record record)
    Iterator iter = field.iterator();
    while ( iter.hasNext() ){
       String value = iter.next();
-      result = result + Character.toUpperCase(value.charAt(0)) + value.substring(1); 
+      result = result + Character.toUpperCase(value.charAt(0)) + value.substring(1);
    }
    return result;
 }
@@ -58,20 +58,20 @@ public String getModifDateBcu(Record record)
 	String field005 = indexer.getFieldVals(record, "005[0-7]", ", ");
 	if ( field005 == null || field005.length() == 0)
 		return (null);
-	
+
 	String annee = field005.substring(0, 4);
 	String mois = field005.substring(4, 6);
-	
+
 	//si le premier chiffre est un zéro on le supprime.
 	if ( mois.substring(0,1).equals("0") )
-	   mois = mois.substring(1,2); 
-	
+	   mois = mois.substring(1,2);
+
 	Date aujourdhui = new Date();
 	formaterAnnee = new SimpleDateFormat("yyyy");
   String currentAnnee = formaterAnnee.format(aujourdhui);
-  
+
   //return annee+ " " + mois + "  " + currentAnnee + " test " + annee.equals(currentAnnee);
-  
+
   if ( annee.equals(currentAnnee) )
     return mois;
 	else
@@ -85,27 +85,27 @@ public String getModifDateBcu(Record record)
 public Set getAuthorsAndFunctions(resultSet, variableFields){
    for (VariableField fields : variableFields)
    {
-      if ( fields == null) continue; 
-      
+      if ( fields == null) continue;
+
       StringBuilder authorsBuilder = new StringBuilder();
       Iterator iter = fields.getSubfields().iterator();
       while ( iter.hasNext() ) {
-       Subfield f = iter.next(); 
+       Subfield f = iter.next();
        char code = f.getCode();
        if ( code == 'a' ){
-          authorsBuilder.append(f.getData()); 
+          authorsBuilder.append(f.getData());
           authorsBuilder.append(" ");
        }
        if ( code == 'b')  {
-         authorsBuilder.append(f.getData()); 
+         authorsBuilder.append(f.getData());
        }
        if ( code == 'd')  {
          authorsBuilder.append(" ");
-         authorsBuilder.append(f.getData()); 
+         authorsBuilder.append(f.getData());
        }
        if ( code == 'c'  ){
-         authorsBuilder.append(", "); 
-         authorsBuilder.append(f.getData()); 
+         authorsBuilder.append(", ");
+         authorsBuilder.append(f.getData());
          }
       }
       resultSet.add(authorsBuilder.toString());
@@ -124,11 +124,11 @@ public Set getAuthorDisplayBcu(Record record)
    List fields700 = record.getVariableFields("700");
    List fields701 = record.getVariableFields("701");
    List fields702 = record.getVariableFields("702");
-   
+
    resultSet = getAuthorsAndFunctions(resultSet, fields700);
    resultSet = getAuthorsAndFunctions(resultSet, fields701);
    resultSet = getAuthorsAndFunctions(resultSet, fields702);
-   
+
    return resultSet;
 }
 
@@ -137,7 +137,7 @@ public Set getAuthorDisplayBcu(Record record)
  */
 public String getSortableAuthorBcu(Record record)
 {
-  
+
    StringBuffer resultBuf = new StringBuffer();
 
    DataField df = (DataField) record.getVariableField("700");
@@ -169,7 +169,7 @@ public String getSortableAuthorBcu(Record record)
 
    // Solr field properties should convert to lowercase
    return resultBuf.toString().trim();
-   
+
    return null;
 }
 
@@ -177,14 +177,14 @@ public String getSortableAuthorBcu(Record record)
 public Set getFormatBcu(Record record){
    Set resultSet = new LinkedHashSet();
    mapName = "format_bcu.properties";
-   
+
    //on test si le 7eme caractere existe
    resultSet = indexer.getFieldList(record, "000[6-7]");
    Iterator iter = resultSet.iterator();
    Boolean doublePos = false;
    if (iter.hasNext()){
       String code = iter.next();
-      if ( code.compareToIgnoreCase("aa")==0 || 
+      if ( code.compareToIgnoreCase("aa")==0 ||
                code.compareToIgnoreCase("ai")==0 ||
                code.compareToIgnoreCase("ac")==0 ||
                code.compareToIgnoreCase("am")==0 ||
@@ -193,26 +193,26 @@ public Set getFormatBcu(Record record){
                code.compareToIgnoreCase("ls")==0 ||
                code.compareToIgnoreCase("rm")==0 ||
                code.compareToIgnoreCase("nm")==0  ||
-               code.compareToIgnoreCase("li")==0 
+               code.compareToIgnoreCase("li")==0
                 )
          doublePos = true;
    }
-  
+
    if (! doublePos)
       resultSet = indexer.getFieldList(record, "000[6]");
-      
-   
-   String internalMapName = indexer.loadTranslationMap(mapName);     
+
+
+   String internalMapName = indexer.loadTranslationMap(mapName);
    resultSet = Utils.remap(resultSet, indexer.findMap(internalMapName), true);
-  
+
    String field105a = indexer.getFieldVals(record, "105a[4-7]", ", ");
    if ( field105a.indexOf("m")!=-1 || field105a.indexOf("v")!=-1 || field105a.indexOf("7")!=-1)
-      resultSet.add("Thèse ou mémoire"); 
-      
-  
+      resultSet.add("Thèse ou mémoire");
+
+
    String field106a = indexer.getFieldVals(record, "106a", ", ");
    if ( field106a.indexOf("s")!=-1 )
-      resultSet.add("Livre électronique");          
+      resultSet.add("En ligne");          
 
    return resultSet;
 }
@@ -223,7 +223,7 @@ public String getEanBcu(Record record){
    String result = "";
    if ( field073a.length() > 0 )
       result = field073a;
-  
+
    Set fields010a = indexer.getFieldList(record, "010a");
    Iterator iter = fields010a.iterator();
    while ( iter.hasNext() ){
@@ -232,7 +232,7 @@ public String getEanBcu(Record record){
       if (field.length()==17)
          result = field.replace("-", "");
    }
-   
+
    return result;
 }
 
@@ -259,27 +259,27 @@ public Set getTitreRevueBcu( Record record, String fieldSpec ){
 
       List marcFieldList = record.getVariableFields(fldTag);
       if (marcFieldList.isEmpty()) continue;
-      
+
       //Pattern subfieldPattern = Pattern.compile(subfldTags.length() == 0 ? "." : subfldTags);
       for (VariableField fields : marcFieldList)
       {
-         if ( fields == null) continue; 
-      
+         if ( fields == null) continue;
+
          StringBuilder buffer = new StringBuilder();
          Iterator iter = fields.getSubfields().iterator();
-         while ( iter.hasNext() ) {            
+         while ( iter.hasNext() ) {
             Subfield f = iter.next();
             char code = f.getCode();
             if ( code == 't' || code == 'a' ){
-               buffer.append(f.getData()); 
+               buffer.append(f.getData());
                buffer.append(". ");
             }
             if ( code == 'x')  {
                buffer.append("ISSN : ");
-               buffer.append( f.getData() ); 
+               buffer.append( f.getData() );
             }
          }
-         resultSet.add(buffer.toString());      
+         resultSet.add(buffer.toString());
       }
       }
 
@@ -292,16 +292,16 @@ public Set setPeriodiquesBcu( Record record ){
    List field955List = record.getVariableFields("955");
    List field930List = record.getVariableFields("930");
    List field995List = record.getVariableFields("995");
-   
+
    if (field955List.isEmpty()) return resultSet;
-   
+
    Map cotes = new HashMap();
    for (VariableField fields : field930List){
       if ( fields == null) continue;
       StringBuilder buffer = new StringBuilder();
       Iterator iter = fields.getSubfields().iterator();
       String cote = "", index = "";
-      while ( iter.hasNext() ) {            
+      while ( iter.hasNext() ) {
          Subfield f = iter.next();
          char code = f.getCode();
          if ( code == 'a' ){
@@ -315,7 +315,7 @@ public Set setPeriodiquesBcu( Record record ){
       }
       cotes.put(index, cote);
    }
-   
+
    Map localisations = new HashMap();
    String mapName = "rcr_codes_map.properties";
    String internalMapName = indexer.loadTranslationMap(mapName);
@@ -325,7 +325,7 @@ public Set setPeriodiquesBcu( Record record ){
       StringBuilder buffer = new StringBuilder();
       Iterator iter = fields.getSubfields().iterator();
       String localisation = "", index = "";
-      while ( iter.hasNext() ) {            
+      while ( iter.hasNext() ) {
          Subfield f = iter.next();
          char code = f.getCode();
          if ( code == 'a' ){
@@ -345,26 +345,26 @@ public Set setPeriodiquesBcu( Record record ){
    internallocalMap = indexer.loadTranslationMap(localMap);
    localMapping = indexer.findMap(internallocalMap);
    for (VariableField fields : field955List){
-      if ( fields == null) continue; 
+      if ( fields == null) continue;
 
       StringBuilder buffer = new StringBuilder();
       Iterator iter = fields.getSubfields().iterator();
-      while ( iter.hasNext() ) {            
+      while ( iter.hasNext() ) {
          Subfield f = iter.next();
          char code = f.getCode();
-         if ( code == '5' ){            
+         if ( code == '5' ){
             index = f.getData().substring(0, 9);
-            
+
             //ajout de la localisation
             buffer.append(mapping.get(index));
-                        
+
             //ajout de la salle
             String loc = localMapping.get(localisations.get(index));
             if (loc!=null){
                buffer.append(", ");
                buffer.append(loc);
             }
-            
+
             //ajout de la cote presente dans le 930
             String varcote = cotes.get(f.getData());
             if (varcote!=null && varcote.length()>0){
@@ -378,14 +378,14 @@ public Set setPeriodiquesBcu( Record record ){
             buffer.append(f.getData());
          }
       }
-      resultSet.add(buffer.toString());      
+      resultSet.add(buffer.toString());
    }
-   
+
    return resultSet;
 }
 
 /**
-fonction pour les champs sujet. 
+fonction pour les champs sujet.
 */
 public Set getSubjectBcu(Record record, String fieldSpec) {
    Set resultSet = new LinkedHashSet();
@@ -402,16 +402,16 @@ public Set getSubjectBcu(Record record, String fieldSpec) {
       String fldTag = fldTags[i].substring(0, 3);
       //sous champ marc
       String subfldTags = fldTags[i].substring(3);
-      
+
       List marcFieldList = record.getVariableFields(fldTag);
       if (marcFieldList.isEmpty()) continue;
-      
+
       for (VariableField fields : marcFieldList) {
-         if ( fields == null) continue; 
-      
+         if ( fields == null) continue;
+
          StringBuilder buffer = new StringBuilder();
          Iterator iter = fields.getSubfields().iterator();
-         while ( iter.hasNext() ) {            
+         while ( iter.hasNext() ) {
             Subfield f = iter.next();
             char code = f.getCode();
             if (subfldTags.indexOf(code)!=-1){
@@ -419,9 +419,9 @@ public Set getSubjectBcu(Record record, String fieldSpec) {
                            buffer.append(separator);
              buffer.append(f.getData());
             }
-         
+
          }
-         resultSet.add(buffer.toString());      
+         resultSet.add(buffer.toString());
       }
    }
    return resultSet;
@@ -432,32 +432,32 @@ public String setPunctuation(Record record, String fieldSpec, String separators)
    StringBuilder result = new StringBuilder();
    String fieldsSeparator = ":";
    String separatorSeparator = "\\|";
-   
+
    String[] fields = fieldSpec.split(fieldsSeparator);
    String[] separatorsList = separators.split(separatorSeparator);
-   
+
    //verification de la conformité des paramètres
    if ( (fields.length - separatorsList.length) != 1)
       System.err.println("Paramètres invalides, il doit y avoir un separateur de moins que de champs");
-   
+
    for (int i = 0; i < fields.length; i++) {
       // Check to ensure tag length is at least 3 characters
       if (fields[i].length() < 3){
           System.err.println("Invalid tag specified: " + fields[i]);
           continue;
       }
-      
+
       //champ marc
       String fldTag = fields[i].substring(0, 3);
       //sous champ marc
       String subfldTags = fields[i].substring(3);
-      
+
       List marcFieldList = record.getVariableFields(fldTag);
       if (marcFieldList.isEmpty()) continue;
-      
+
       for (VariableField fieldsList : marcFieldList) {
-         if ( fields == null) continue; 
-      
+         if ( fields == null) continue;
+
          StringBuilder buffer = new StringBuilder();
          Iterator iter = fieldsList.getSubfields().iterator();
          while ( iter.hasNext() ) {
@@ -469,11 +469,11 @@ public String setPunctuation(Record record, String fieldSpec, String separators)
                buffer.append(f.getData());
             }
          }
-         result.append(buffer.toString());      
+         result.append(buffer.toString());
       }
    }
    return result.toString();
-   
+
 }
 
 /** fonction de mapping pour la ponctuation. Elle remplace la lettre v par une virgule (bidouille car on peut pas passer de virgule en paramètre du fichier index.properties) */
@@ -492,8 +492,8 @@ public String setTitleDisplay( Record record){
    for (VariableField fields : field200List){
       if ( fields == null) continue;
       StringBuilder buffer = new StringBuilder();
-      Iterator iter = fields.getSubfields().iterator();     
-      while ( iter.hasNext() ) {            
+      Iterator iter = fields.getSubfields().iterator();
+      while ( iter.hasNext() ) {
          Subfield f = iter.next();
          char code = f.getCode();
          if (code=='a' && result.length()==0){
@@ -516,7 +516,7 @@ public String setTitleDisplay( Record record){
             result.append(f.getData());
          }
       }
-      
+
    }
    return result.toString();
 }
