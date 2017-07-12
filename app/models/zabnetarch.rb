@@ -250,14 +250,8 @@ class Zabnetarch
 
 	loop do
 	   # on recupere le contenu xml
-		begin    
-			all_data[i] = Timeout::timeout(10) {
-	 		    socket.gets
-			}
-		rescue
-			all_data = []
-		end
-	  
+	   all_data[i] = socket.gets
+		
 	   # on teste pour voir si il affiche methodResponse si il affiche compteur+1
 	   if (all_data[i] =~ /\/methodResponse(.*)/ )
 	      compteur = compteur + 1
