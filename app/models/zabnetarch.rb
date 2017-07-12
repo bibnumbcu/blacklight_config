@@ -18,7 +18,8 @@ class Zabnetarch
       query='LECTOR|' + login.capitalize + '|' + password
       send query
       responseXML = get_response
-      
+      return false if responseXML.empty?
+
       #traitement des caractères mal formés de la réponse (& au lieu de &amp; par exemple)
       responseXML = responseXML.gsub(/&/, '&amp;')
 #      Rails.logger.debug 'BUG512 : reponse : ' + responseXML.inspect
@@ -242,16 +243,21 @@ class Zabnetarch
 #         all_data << $_
 #      end
 
-#-----------------------------------------------------------------------
-# modification pour AbsysNet 2.0
-#-----------------------------------------------------------------------
 
+# modification pour AbsysNet 2.0
 	i = 0
 	compteur = 0
 
 	loop do
 	   # on recupere le contenu xml
-	   all_data[i] = socket.gets
+		begin    
+			all_data[i] = Timeout::timeout(10) {
+	 		    socket.gets
+			}
+		rescue
+			all_data = []
+		end
+	  
 	   # on teste pour voir si il affiche methodResponse si il affiche compteur+1
 	   if (all_data[i] =~ /\/methodResponse(.*)/ )
 	      compteur = compteur + 1
@@ -260,8 +266,6 @@ class Zabnetarch
 	   break if (compteur == 2)
 	   i = i+1
 	end      
-
-
 #-----------------------------------------------------------------------
 
       #on supprime la première réponse indiquant le succès de la connexion.
