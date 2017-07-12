@@ -186,8 +186,15 @@ class User < ActiveRecord::Base
   def self.authenticate(login, password)
     connexion_zabnetarch = Zabnetarch.new
     return false if !connexion_zabnetarch.connect
+	
+	begin    
+		user = Timeout::timeout(10) {
+	 		 connexion_zabnetarch.get_lector(login, password) 
+		}
+	rescue
+		user = false
+	end
     
-    user = connexion_zabnetarch.get_lector(login, password) 
     connexion_zabnetarch.close
     user
   end
