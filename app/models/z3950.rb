@@ -112,8 +112,8 @@ class Z3950
          #6 : santé
          #16 : carnot
          #2 : droit
-#         succursales = ['1', '6', '16']
-         succursales = ['1', '2']
+         succursales = ['1', '2', '16']
+#         succursales = ['1', '2']
          salles_lafayette_excluded = ['ARCHIVES BASTAIRE', 'LAFAYETTE S. LECTURE', 'LAFAYET.S.CATALOGUES', 'LAF. S. PERIODIQUES']
 #         salles_sante_authorized = ['MAGASIN : DEMANDER A L\'ACCUEIL']
          salles_carnot_excluded = ['SALLE A11']
