@@ -1,5 +1,5 @@
 # config valid only for Capistrano 3.1
-lock '3.7.2'
+lock '3.10.0'
 
 set :application, "192.168.120.231"
 set :repo_url, 'https://github.com/bibnumbcu/blacklight_config'
@@ -49,8 +49,8 @@ namespace :deploy do
     end
   end
 
-  
- 
+
+
 #  after :publishing, :restart
 #  after :restart, :clear_cache do
 #    on roles(:web), in: :groups, limit: 3, wait: 10 do
@@ -62,5 +62,5 @@ namespace :deploy do
 #  end
 
 
-   
+
 end
