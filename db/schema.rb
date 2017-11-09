@@ -1,4 +1,3 @@
-# encoding: UTF-8
 # This file is auto-generated from the current state of the database. Instead
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
@@ -11,21 +10,21 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20151005145312) do
+ActiveRecord::Schema.define(version: 20170123141052) do
 
-  create_table "bookmarks", force: true do |t|
+  create_table "bookmarks", force: :cascade do |t|
     t.integer  "user_id",       null: false
     t.string   "user_type"
     t.string   "document_id"
-    t.string   "title"
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.string   "document_type"
+    t.binary   "title"
+    t.datetime "created_at",    null: false
+    t.datetime "updated_at",    null: false
+    t.index ["document_id"], name: "index_bookmarks_on_document_id"
+    t.index ["user_id"], name: "index_bookmarks_on_user_id"
   end
 
-  add_index "bookmarks", ["user_id"], name: "index_bookmarks_on_user_id"
-
-  create_table "books", force: true do |t|
+  create_table "books", force: :cascade do |t|
     t.string   "title",      null: false
     t.string   "author",     null: false
     t.string   "publisher",  null: false
@@ -36,35 +35,35 @@ ActiveRecord::Schema.define(version: 20151005145312) do
     t.datetime "updated_at"
   end
 
-  create_table "searches", force: true do |t|
-    t.text     "query_params"
+  create_table "searches", force: :cascade do |t|
+    t.binary   "query_params"
     t.integer  "user_id"
     t.string   "user_type"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",   null: false
+    t.datetime "updated_at",   null: false
+    t.index ["user_id"], name: "index_searches_on_user_id"
   end
 
-  add_index "searches", ["user_id"], name: "index_searches_on_user_id"
-
-  create_table "suggestions", force: true do |t|
+  create_table "suggestions", force: :cascade do |t|
     t.integer  "user_id",    null: false
     t.integer  "book_id",    null: false
     t.integer  "status",     null: false
     t.string   "recipient",  null: false
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.index ["book_id"], name: "index_suggestions_on_book_id"
+    t.index ["user_id"], name: "index_suggestions_on_user_id"
   end
 
-  add_index "suggestions", ["book_id"], name: "index_suggestions_on_book_id"
-  add_index "suggestions", ["user_id"], name: "index_suggestions_on_user_id"
-
-  create_table "users", force: true do |t|
-    t.string  "user_id",                    null: false
+  create_table "users", force: :cascade do |t|
+    t.string  "user_id",                               null: false
     t.string  "password"
     t.string  "name"
     t.string  "first_name"
     t.string  "email"
-    t.boolean "guest",      default: false
+    t.boolean "guest",                 default: false
+    t.string  "encrypted_password"
+    t.string  "encrypted_password_iv"
   end
 
 end

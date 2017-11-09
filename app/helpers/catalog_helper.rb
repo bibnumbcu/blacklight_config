@@ -6,8 +6,7 @@ module CatalogHelper
     values = facets_from_request ['localisation_facet']
     result ='<ul>'
     values[0].items.map{|one_item|
-	  next if one_item.value == 'Bibliothèque IUT Cézeaux' || one_item.value == 'Polytech ISIMA' || one_item.value == 'B.U. STAPS'
-	  if localisation == one_item.value
+      if localisation == one_item.value
         result += '<li><a class="active" href="/nouveautes/' + CGI.escape(one_item.value) + '">' + one_item.value + '</a></li>'
       else
         result += '<li ><a href="/nouveautes/' + CGI.escape(one_item.value) + '">' + one_item.value + '</a></li>'

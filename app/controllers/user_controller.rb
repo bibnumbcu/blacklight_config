@@ -84,6 +84,7 @@ class UserController < ApplicationController
       end
       barcode = User.clean_barcode( params[:barcode], params[:succursale] )
       flash[:alert] = current_user.renew_loan( barcode )
+#     Rails.logger.debug 'Bug 1553 : reponse : ' + renew.inspect
       redirect_to '/user/compte'
    end
    

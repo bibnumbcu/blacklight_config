@@ -5,17 +5,15 @@
     </div>
   <% end %>
 
-<%= form_tag catalog_index_path, :class => 'advanced form-horizontal', :method => :get do  %>
-<div class="sort-submit-buttons clearfix">
-    <%= render 'advanced_search_submit_btns' %>
-  </div>
-  <%= render_hash_as_hidden_fields(params_for_search(advanced_search_context, {})) %>
+<%= form_tag search_catalog_path, :class => 'advanced form-horizontal', :method => :get do  %>
+
+  <%= render_hash_as_hidden_fields(search_state.params_for_search(advanced_search_context)) %>
 
   <div class="input-criteria">
 
       <div class="query-criteria">
         <h3 class="query-criteria-heading">
-          <%= t('blacklight_advanced_search.form.query_criteria_heading_html', :select_menu =>  select_menu_for_field_operator ) %> 
+          <%= t('blacklight_advanced_search.form.query_criteria_heading_html', :select_menu =>  select_menu_for_field_operator ) %>
         </h3>
 
         <div id="advanced_search">
@@ -25,7 +23,7 @@
           </ul>
         </div>
       </div>
-      
+
       <div class="limit-criteria">
         <h3 class="limit-criteria-heading"><%= t('blacklight_advanced_search.form.limit_criteria_heading_html')%></h3>
 

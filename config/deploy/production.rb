@@ -5,9 +5,9 @@
 # is considered to be the first unless any hosts have the primary
 # property set.  Don't declare `role :all`, it's a meta role.
 
-role :web, "192.168.120.231"                          # Your HTTP server, Apache/etc
-role :app, "192.168.120.231"                          # This may be the same as your `Web` server
-role :db,  "192.168.120.231", :primary => true # This is where Rails migrations will run
+role :web, "192.168.120.229"                          # Your HTTP server, Apache/etc
+role :app, "192.168.120.229"                          # This may be the same as your `Web` server
+role :db,  "192.168.120.229", :primary => true # This is where Rails migrations will run
 
 # Extended Server Syntax
 # ======================
@@ -17,7 +17,7 @@ role :db,  "192.168.120.231", :primary => true # This is where Rails migrations 
 set :stage, :production
 set :branch, "master"
 
-server '192.168.120.231', user: 'mabacaul', roles: %w{web app}, my_property: :my_value
+server '192.168.120.229', user: 'mabacaul', roles: %w{web app}, my_property: :my_value
 set :rails_env, :production
 
 # Custom SSH Options

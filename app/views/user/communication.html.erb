@@ -1,7 +1,7 @@
 <% if @lafayette %>
    <h1>Où souhaitez-vous recevoir le document ?</h1>
    <%= form_tag({:controller => 'user', :action => 'communication'}, method: "get") %>
-
+   
    <%= radio_button_tag(:lafayette, "Retrait à lafayette",'checked') %>
    <%= label_tag(:lafayette_label, "à la BU Lafayette du lundi au vendredi") %><br />
    <%= radio_button_tag(:lafayette, "Retrait à Gergovia") %>

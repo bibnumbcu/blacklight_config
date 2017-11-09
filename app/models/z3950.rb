@@ -7,7 +7,7 @@ class Z3950
 
    # port 2300 pour prod
    # port 2200 pour test
-  def initialize(ip='192.168.120.249', base='abnet_db', port='2300')
+  def initialize(ip='192.168.120.249', base='abnet_db', port='2200')
       @ip = ip
       @base = base
       @port = port

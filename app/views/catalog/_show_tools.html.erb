@@ -15,16 +15,17 @@
   <div class="panel-body">
     <ul class="nav">
       <%= render_show_doc_actions @document do |config, inner| %>
+      <% if config.key==:librarian_view || config.key==:bookmark || config.key==:email %>
         <li class="<%= config.key %>">
-            <%= inner if config.key!=:sms %>
+          <%= inner %>
         </li>
+      <% end %>
       <% end %>
     </ul>
   </div>
 </div>
 
-  
-  
+
  <%= javascript_include_tag "google" %>
-  </div>
+</div>
 </div>

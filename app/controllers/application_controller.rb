@@ -1,12 +1,10 @@
 class ApplicationController < ActionController::Base
-  # Adds a few additional behaviors into the application controller 
+  # Adds a few additional behaviors into the application controller
   include Blacklight::Controller
   layout 'blacklight'
 
-  # Prevent CSRF attacks by raising an exception.
-  # For APIs, you may want to use :null_session instead.
   protect_from_forgery with: :exception
-  
+
   helper_method :current_or_guest_user, :current_user, :user_session, :guest_user
   
    def user_session
@@ -28,18 +26,7 @@ class ApplicationController < ActionController::Base
    end
    
    def guest_user
-      if session[:guest_user_id]
-         begin
-            @guest_user = User.find(session[:guest_user_id])
-         rescue ActiveRecord::RecordNotFound
-            @guest_user = create_guest_user
-         end
-      else
-         @guest_user = create_guest_user
-      end
-      session['guest_user_id'] = @guest_user.id
-#      Rails.logger.debug 'Bug 1109 : reponse : ' + session['guest_user_id'].inspect
-      @guest_user
+      @guest_user ||= User.find(session[:guest_user_id] ||= create_guest_user.id)
    end
 
    private

@@ -1,7 +1,7 @@
 <%= form_tag "demande", method: "post", class:"suggestion-form form-horizontal" do %>
 <fieldset>
 <legend>Lecteur</legend>
-  
+
       <div class="form-group">
         <%= label_tag :firstname, "Prénom", class:"col-sm-3 control-label" %>
         <div class="col-sm-9">
@@ -32,7 +32,7 @@
    <legend>Ouvrage suggéré</legend>
       <div class="form-group">
         <%= label_tag :title, "Titre", class: "col-sm-3 control-label required" %>
-   
+
         <div class="col-sm-9">
          <%= text_field_tag :title, nil, required: 'required', class:"form-control" %>
         </div>
@@ -81,7 +81,8 @@
             </select>
          </div>
       </div>
-       <input type="hidden" name="suggestion_id" value="Suggestions05112015"> 
+      <%= hidden_field_tag :authenticity_token, form_authenticity_token %>
+       <input type="hidden" name="filesuggestion_id" value="Suggestions05112015"-->
 </fieldset>
 
 <div class="sort-submit-buttons clearfix">

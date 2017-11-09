@@ -1,26 +1,36 @@
-# -*- encoding : utf-8 -*-
+# frozen_string_literal: true
 class CatalogController < ApplicationController
-  include Blacklight::Marc::Catalog
+  include BlacklightAdvancedSearch::Controller
+
 
   include Blacklight::Catalog
+  include Blacklight::Marc::Catalog
+
 
   configure_blacklight do |config|
+    # default advanced config values
+    config.advanced_search ||= Blacklight::OpenStructWithHashAccess.new
+    # config.advanced_search[:qt] ||= 'advanced'
+    config.advanced_search[:url_key] ||= 'advanced'
+    config.advanced_search[:query_parser] ||= 'dismax'
+    config.advanced_search[:form_solr_parameters] ||= {}
+
+
+
+    ## Class for sending and receiving requests from a search index
+    # config.repository_class = Blacklight::Solr::Repository
+    #
+    ## Class for converting Blacklight's url parameters to into request parameters for the search index
+    # config.search_builder_class = ::SearchBuilder
+    #
+    ## Model that maps search index responses to the blacklight response model
+    # config.response_model = Blacklight::Solr::Response
+
     ## Default parameters to send to solr for all search-like requests. See also SearchBuilder#processed_parameters
     config.default_solr_params = {
-      :qt => 'search',
-      :rows => 10
+      rows: 10
     }
 
-
-     #parametres pour le plugin de recherche avancée
-    config.advanced_search = {
-     :qt => 'advanced',
-     :form_solr_parameters => {
-       "facet.field" => ["format", "localisation_facet","language_facet"],
-       "facet.limit" => -1, # return all facet values
-       "facet.sort" => "index" # sort by byte order of values
-      }
-   }
 
     # solr path which will be added to solr base url before the other solr params.
     #config.solr_path = 'select'
@@ -32,11 +42,11 @@ class CatalogController < ApplicationController
     ## parameters included in the Blacklight-jetty document requestHandler.
     #
     #config.default_document_solr_params = {
-    #  :qt => 'document',
+    #  qt: 'document',
     #  ## These are hard-coded in the blacklight 'document' requestHandler
-    #  # :fl => '*',
-    #  # :rows => 1
-    #  # :q => '{!raw f=id v=$id}'
+    #  # fl: '*',
+    #  # rows: 1,
+    #  # q: '{!term f=id v=$id}'
     #}
 
     # solr field configuration for search results/index views
@@ -66,8 +76,13 @@ class CatalogController < ApplicationController
     #
     # :show may be set to false if you don't want the facet to be drawn in the
     # facet bar
+    #
+    # set :index_range to true if you want the facet pagination view to have facet prefix-based navigation
+    #  (useful when user clicks "more" on a large facet and wants to navigate alphabetically across a large set of results)
+    # :index_range can be an array or range of prefixes that will be used to create the navigation (note: It is case sensitive when searching values)
+
     config.add_facet_field 'format', :label => 'Type de document', :limit => 6, :collapse => false
-   config.add_facet_field 'pub_date', :label => 'Année de publication', :query => {
+    config.add_facet_field 'pub_date', :label => 'Année de publication', :query => {
        :years_5 => { :label => 'Moins de 5 ans', :fq => "pub_date:[#{Time.now.year - 5 } TO *]" },
        :years_10 => { :label => 'Moins de 10 ans', :fq => "pub_date:[#{Time.now.year - 10 } TO *]" },
        :years_25 => { :label => 'Moins 25 ans', :fq => "pub_date:[#{Time.now.year - 25 } TO *]" }
@@ -91,15 +106,14 @@ class CatalogController < ApplicationController
     #   The ordering of the field names is the order of the display
     config.add_index_field 'author_display', :label => 'Auteur ', :helper_method => :helper_author_method
     config.add_index_field 'published_display', :label => 'Publication '
-    config.add_index_field 'format', :label => 'Type de document '
+    config.add_index_field 'format', :label => 'Type de document ', :link_to_search => true
     config.add_index_field 'volume_display', :label => 'Volume '
 
     # solr fields to be displayed in the show (single result) view
     #   The ordering of the field names is the order of the display
-	config.add_show_field 'complement_titre_display', :label => 'Complément du titre '
+    config.add_show_field 'complement_titre_display', :label => 'Complément du titre '
     config.add_show_field 'author_display', :label => 'Auteur ' , :helper_method => :helper_author_method
     config.add_show_field 'titres_associes_display', :label => 'Titre associé '
-    config.add_show_field 'la_complement_titre_display', :label => 'Complément du titre '
     config.add_show_field 'subtitle_display', :label => 'Sous-titre '
     config.add_show_field 'volume_display', :label => 'Volume '
     config.add_show_field 'edition_display', :label => 'Edition '
@@ -108,8 +122,7 @@ class CatalogController < ApplicationController
     config.add_show_field 'music_display', :label => 'Note '
     config.add_show_field 'informatique_display', :label => 'Note '
     config.add_show_field 'published_display', :label => 'Publication '
-    config.add_show_field 'la_adresse_display', :label => 'Adresse '
-    config.add_show_field 'la_lieu_display', :label => 'Lieu de publication '
+    config.add_show_field 'adresse_display', :label => 'Adresse '
     config.add_show_field 'fond_particulier_display', :label => 'Fonds spécialisés '
     config.add_show_field 'material_type_display', :label => 'Description ', :helper_method => :helper_description_method
     config.add_show_field 'title_series_t', :label => 'Collection ', :helper_method => :helper_title_series_method
@@ -122,8 +135,8 @@ class CatalogController < ApplicationController
     config.add_show_field 'url_suppl_display', :label => 'Plus de détails '
     config.add_show_field 'isbn_t', :label => 'ISBN '
     config.add_show_field 'issn_t', :label => 'ISSN '
-    config.add_show_field 'language_facet', :label => 'Langue '
-    config.add_show_field 'format', :label => 'Type de document '
+    config.add_show_field 'language_facet', :label => 'Langue ', :link_to_search => true
+    config.add_show_field 'format', :label => 'Type de document ' , :link_to_search => true
     config.add_show_field 'subject_topic_display', :label => 'Thèmes ', :helper_method => :helper_theme_method
     config.add_show_field 'subject_era_facet', :label => 'Période '
     config.add_show_field 'subject_geo_facet', :label => 'Région '
@@ -154,13 +167,13 @@ class CatalogController < ApplicationController
     # solr request handler? The one set in config[:default_solr_parameters][:qt],
     # since we aren't specifying it otherwise.
 
-    config.add_search_field 'all_fields', :label => 'Tous les critères'
+    config.add_search_field 'all_fields', label: 'Tous les critères'
 
 
     # Now we see how to over-ride Solr request handler defaults, in this
     # case for a BL "search field", which is really a dismax aggregate
     # of Solr search fields.
-    config.add_search_field("isbn") do |field|
+	config.add_search_field("isbn") do |field|
       field.include_in_simple_select = false
       field.solr_parameters = { :qf => "isbn_t" }
     end
@@ -174,16 +187,16 @@ class CatalogController < ApplicationController
       # Solr parameter de-referencing like $title_qf.
       # See: http://wiki.apache.org/solr/LocalParams
       field.solr_local_parameters = {
-        :qf => '$title_qf',
-        :pf => '$title_pf'
+        qf: '$title_qf',
+        pf: '$title_pf'
       }
     end
 
     config.add_search_field('auteur') do |field|
       field.solr_parameters = { :'spellcheck.dictionary' => 'author' }
       field.solr_local_parameters = {
-        :qf => '$author_qf',
-        :pf => '$author_pf'
+        qf: '$author_qf',
+        pf: '$author_pf'
       }
     end
 
@@ -194,39 +207,42 @@ class CatalogController < ApplicationController
       field.solr_parameters = { :'spellcheck.dictionary' => 'subject' }
       field.qt = 'search'
       field.solr_local_parameters = {
-        :qf => '$subject_qf',
-        :pf => '$subject_pf'
+        qf: '$subject_qf',
+        pf: '$subject_pf'
       }
     end
 
-    config.add_search_field("date de publication") do |field|
+	config.add_search_field("date de publication") do |field|
       field.include_in_simple_select = false
       field.solr_parameters = { :qf => "pub_date" }
-   end
+    end
 
     # "sort results by" select (pulldown)
     # label in pulldown is followed by the name of the SOLR field to sort by and
     # whether the sort is ascending or descending (it must be asc or desc
     # except in the relevancy case).
-    config.add_sort_field 'score desc, pub_date_sort desc, title_sort asc', :label => 'pertinence'
-    config.add_sort_field 'pub_date_sort desc, title_sort asc', :label => 'année'
-    config.add_sort_field 'author_sort asc, title_sort asc', :label => 'auteur'
-    config.add_sort_field 'title_sort asc, pub_date_sort desc', :label => 'titre'
+    config.add_sort_field 'score desc, pub_date_sort desc, title_sort asc', label: 'pertinence'
+    config.add_sort_field 'pub_date_sort desc, title_sort asc', label: 'année'
+    config.add_sort_field 'author_sort asc, title_sort asc', label: 'auteur'
+    config.add_sort_field 'title_sort asc, pub_date_sort desc', label: 'titre'
 
     # If there are more than this many search results, no spelling ("did you
     # mean") suggestion is offered.
     config.spell_max = 5
+
+    # Configuration for autocomplete suggestor
+    config.autocomplete_enabled = true
+    config.autocomplete_path = 'suggest'
   end
 
- # surcharge de la méthode index pour l'affichage des nouveautés sur la page d'accueil
-    # get search results from the solr index
+# get search results from the solr index
     def index
-      (@response, @document_list) = search_results(params, search_params_logic)
+      (@response, @document_list) = search_results(params)
 
       #pour l'affichage des nouveautes
       localisation_values = facets_from_request ['localisation_facet']
-      if !localisation_values[0].items.empty?
-        @succursale = nil #||= localisation_values[0].items[0].value
+	    if !localisation_values[0].items.empty?
+		    @succursale = nil #||= localisation_values[0].items[0].value
         @succursale = CGI.unescape(params[:id]) if !params[:id].nil?
         month = Time.now.month
         month = month - 1 if month > 1
@@ -240,30 +256,34 @@ class CatalogController < ApplicationController
         year = year - 1 if month == '12'
         modif_date = year.to_s + month + day
 
+        #date de modification moins un mois, année moins 3 ans.
+        query = "pub_date:[#{Time.now.year - 3} TO *] modif_date:[#{modif_date} TO *] "
 
-        query = "modif_date:[#{modif_date} TO *] pub_date:[#{Time.now.year - 3} TO *]"
-#        blacklight_config.qt = "advanced"
-#        Rails.logger.debug 'Bug0409123613h31 : ' + query.inspect
-        (@response_nouv, @document_list_nouv) = search_results({:qt => 'advanced', :q => query, :f => {:localisation_facet => @succursale}, :defType => 'lucene', :sort => 'modif_date_sort desc', :rows => 50 }, search_params_logic )
-
-
-      end
+        blacklight_config.qt = "advanced"
+        blacklight_config.advanced_search[:query_parser] = "lucene"
+        #  Rails.logger.debug 'Bug 14h04 : ' + query.inspect
+        (@response_nouv, @document_list_nouv) = search_results({:qt => 'advanced',:q => query, :f => {:localisation_facet => @succursale}, :defType => 'lucene', :sort => 'modif_date_sort desc', :rows => 50 } )
+        blacklight_config.advanced_search[:query_parser] = "dismax"
+     end
 
       respond_to do |format|
         format.html { store_preferred_view }
         format.rss  { render :layout => false }
         format.atom { render :layout => false }
         format.json do
-          render json: render_search_results_as_json
+          @presenter = Blacklight::JsonPresenter.new(@response,
+                                                     @document_list,
+                                                     facets_from_request,
+                                                     blacklight_config)
         end
-
         additional_response_formats(format)
         document_export_formats(format)
       end
     end
 
-   # surcharge de la méthode show du module catalog de blacklight
-   def show
+    # get a single document from the index
+    # to add responses for formats other than html or json see _Blacklight::Document::Export_
+    def show
       @response, @document = fetch params[:id]
 
       @localisations = @document.localisations
@@ -274,5 +294,5 @@ class CatalogController < ApplicationController
 
         additional_export_formats(@document, format)
       end
-   end
+    end
 end

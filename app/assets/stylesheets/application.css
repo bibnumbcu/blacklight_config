@@ -12,120 +12,120 @@
  *= require user
  *= require application
  *= require blacklight
- 
+
  *
  *
  *= require 'blacklight_advanced_search'
 */
- 
-  span.facet-count{
- width:55px;
- }
- 
-/* lien vers la recherche avancée dans le header */ 
-a.advanced_search{
-   display:block;
-   margin-top : 15px;
+
+ span.facet-count{
+width:55px;
+}
+
+/* lien vers la recherche avancée dans le header */
+.navbar-form{
+  margin:0;
+  padding:0;
 }
 
 .logo_accueil{
-  margin-left: 20px;
+ margin-left: 20px;
 }
 .accueil{
-  margin-top: 10px;
+ margin-top: 10px;
 }
 .maison{
-  margin-top: -3px;
+ margin-top: -3px;
 }
 
 #document h1 {
-   font-size: 20px; line-height: 25px;
+  font-size: 20px; line-height: 25px;
 }
 
 
-/** Image de couverture 
- *
+/** Image de couverture
+*
 */
-.couverture{   
-   border:1px dotted #777;
-   border-radius:3px;
+.couverture{
+  border:1px dotted #777;
+  border-radius:3px;
 }
 
 .document-index .couverture{
-   width:50px;
-   display:block;
-   float:right;
-   margin : 15px 50px 0 0;
-   
- }
- 
-.document-index dl{
-  display:inline-block;
- }
+  width:50px;
+  display:block;
+  float:right;
+  margin : 15px 50px 0 0;
 
- 
- /****** Localisations ***************
- *
+}
+
+.document-index dl{
+ display:inline-block;
+}
+
+
+/****** Localisations ***************
+*
 */
 #localisations{
-   clear: both;
-   margin-top:10px;
- }
+  clear: both;
+  margin-top:10px;
+}
 
 #localisations tr, #localisations td{
-  border : 1px dotted #ddd; 
-  text-align : left; 
+ border : 1px dotted #ddd;
+ text-align : left;
 }
- 
- 
+
+
 #localisations tr:first-child > td{
-   font-size: 0.9em;   
-   color: #444;
- }
- 
- #localisations table{
- width: 100%;
- }
- 
- /****** Nouveautes *****************
- *
- */
+  font-size: 0.9em;
+  color: #444;
+}
+
+#localisations table{
+width: 100%;
+}
+
+/****** Nouveautes *****************
+*
+*/
 
 .nouveautes ul{
-  border-left : 1px #d4d4d4 dotted;
-  padding:0 20px;
-  -moz-column-count:3;
-  -webkit-column-count:3;
-  -o-column-count:3;
-  column-count:3;
-  -moz-column-gap:40px;
-  -webkit-column-gap:40px;
-  -o-column-gap:40px;
-  column-gap:40px;
-  -webkit-column-rule-width:1px;
-  -webkit-column-rule-color:#d4d4d4;
-  -webkit-column-rule-style:dotted;
-  -moz-column-rule-width:1px;
-  -moz-column-rule-color:#d4d4d4;
-  -moz-column-rule-style:dotted;
-  -o-column-rule-width:1px;
-  -o-column-rule-color:#d4d4d4;
-  -o-column-rule-style:dotted;
-  column-rule-width:1px;
-  column-rule-color:#d4d4d4;
-  column-rule-style:dotted;
+ border-left : 1px #d4d4d4 dotted;
+ padding:0 20px;
+ -moz-column-count:3;
+ -webkit-column-count:3;
+ -o-column-count:3;
+ column-count:3;
+ -moz-column-gap:40px;
+ -webkit-column-gap:40px;
+ -o-column-gap:40px;
+ column-gap:40px;
+ -webkit-column-rule-width:1px;
+ -webkit-column-rule-color:#d4d4d4;
+ -webkit-column-rule-style:dotted;
+ -moz-column-rule-width:1px;
+ -moz-column-rule-color:#d4d4d4;
+ -moz-column-rule-style:dotted;
+ -o-column-rule-width:1px;
+ -o-column-rule-color:#d4d4d4;
+ -o-column-rule-style:dotted;
+ column-rule-width:1px;
+ column-rule-color:#d4d4d4;
+ column-rule-style:dotted;
 }
 
 .nouveautes ul li{
-  list-style-type: none;
+ list-style-type: none;
 }
 .nouveautes ul li a.active{
-  color: #333;
+ color: #333;
 
 }
 
 .disponibilite{
-   border: 1px dotted #ccc;
+  border: 1px dotted #ccc;
 }
 
 
@@ -134,22 +134,22 @@ a.advanced_search{
 * formulaire de recherche avancée
 */
 h1.advanced {
-   font-size: 2em;
+  font-size: 2em;
 }
 .advanced-search-form h3 {
-   font-size: 1.4em;
+  font-size: 1.4em;
 }
 
 /**
 * Formulaire des suggestions
 */
 .required_notification {
-    color:#d45252;
-    margin:5px 0 0 0;
-    display:inline;
+   color:#d45252;
+   margin:5px 0 0 0;
+   display:inline;
 }
 
 .required:after{
-   color: #d45252;
-   content: " *";
+  color: #d45252;
+  content: " *";
 }

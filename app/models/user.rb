@@ -2,26 +2,24 @@
 class User < ActiveRecord::Base
 
   if Blacklight::Utils.needs_attr_accessible?
-
     attr_accessible :email, :password, :password_confirmation
   end
-# Connects this user object to Blacklights Bookmarks. 
+# Connects this user object to Blacklights Bookmarks.
   include Blacklight::User
-  has_many :suggestion, dependent: :restrict
+  has_many :suggestion, dependent: :restrict_with_error
   attr_accessible :email, :password, :password_confirmation if Rails::VERSION::MAJOR < 4
 
-# Connects this user object to Blacklights Bookmarks. 
-  include Blacklight::User
+
 
   validates_uniqueness_of :user_id
-  attr_accessible :user_id, :card_number, :name, :first_name, :email, :expir_date, :library, :address1, :address2,
-   :phone1, :phone2, :birthday, :prets, :reservations, :communications, :remember_me, :suggestions
+  attr_accessible :user_id, :card_number, :name, :first_name, :email, :expir_date, :library, :address1, :address2,:phone1,
+:phone2, :birthday, :prets, :reservations, :communications, :remember_me, :suggestions if Rails::VERSION::MAJOR < 4
 
   attr_accessor :card_number,  :expir_date, :library, :address1, :address2,
    :phone1, :phone2, :birthday, :prets, :reservations, :communications, :remember_me
 
-  @@messages = { 
-               'COPIA_NO_RESERVABLE' => 'Cet exemplaire n\'est pas réservable.', 
+  @@messages = {
+               'COPIA_NO_RESERVABLE' => 'Cet exemplaire n\'est pas réservable.',
                'COPIA_PRESTADA' => 'Cet exemplaire n\'est pas disponible pour le moment à la réservation.',
                'COPIA_NO_EXISTE' => 'Cet exemplaire n\'existe pas.',
                'COPIA_NO_EN_CIRCULACION' => 'Cet exemplaire est déjà réservé plusieurs fois.',
@@ -44,18 +42,20 @@ class User < ActiveRecord::Base
   cipher.encrypt
   Iv = cipher.random_iv
   Salt = SecureRandom.random_bytes(16)
-  Cle = Digest::SHA256.hexdigest('Pierre qui roule n\'amasse pas mousse.')
-	Encryptor.default_options.merge!(insecure_mode: true, v2_gcm_iv: true)
+  Cle = cipher.random_key
+  #Encryptor.default_options.merge!(insecure_mode: true, v2_gcm_iv: true)
+
+
 
   def password=(password)
       write_attribute(:password, Encryptor.encrypt(password, :key => Cle, :iv => Iv).force_encoding("ISO-8859-1").encode("UTF-8"))
   end
-  
+
   def suggestions
       @suggestions = []
       Suggestion.where(user_id: read_attribute(:user_id)).each{|suggestion|
          next if suggestion.book_id.nil?
-         book = Book.find(suggestion.book_id) 
+         book = Book.find(suggestion.book_id)
          @suggestions << {
             :title => book.title,
             :author => book.author,
@@ -70,42 +70,42 @@ class User < ActiveRecord::Base
       }
       @suggestions
   end
-  
-  def assign_attributes(values, options = {})
-    sanitize_for_mass_assignment(values, options[:as]).each do |k, v|
-      send("#{k}=", v)
-    end
-  end
-  
+
+ # def assign_attributes(values, options = {})
+ #   sanitize_for_mass_assignment(values, options[:as]).each do |k, v|
+ #     send("#{k}=", v)
+ #   end
+ # end
+
   def card_number
       User.get_card_number_from_user_id(read_attribute(:user_id))
   end
-  
+
   def reservation exemplaire_id=nil
       connexion_zabnetarch = Zabnetarch.new
-      return false if !connexion_zabnetarch.connect 
+      return false if !connexion_zabnetarch.connect
       reponse = connexion_zabnetarch.set_reservation( User.get_card_number_from_user_id(read_attribute(:user_id)), read_attribute(:password), exemplaire_id )
       connexion_zabnetarch.close
-      
+
       return @@messages['ADMIN_ERROR'] if reponse.nil?
       return 'Votre réservation a été enregistrée'  if reponse==true
       @@messages[reponse]
   end
-  
+
   def cancel_reservation exemplaire_id=nil
-      connexion_zabnetarch = Zabnetarch.new 
+      connexion_zabnetarch = Zabnetarch.new
       return false if !connexion_zabnetarch.connect
       reponse = connexion_zabnetarch.cancel_reservation( User.get_card_number_from_user_id(read_attribute(:user_id)), read_attribute(:password), exemplaire_id )
       connexion_zabnetarch.close
-      
+
       return @@messages['ADMIN_ERROR'] if reponse.nil?
       return 'Cette réservation a été annulée.'  if reponse==true
       @@messages[reponse]
   end
-  
+
   def renew_loan exemplaire_id=nil
 #      Rails.logger.debug 'Bug051549 : carte : ' + read_attribute(:user_id)
-      connexion_zabnetarch = Zabnetarch.new 
+      connexion_zabnetarch = Zabnetarch.new
       return false if !connexion_zabnetarch.connect
       reponse = connexion_zabnetarch.renew_loan( User.get_card_number_from_user_id(read_attribute(:user_id)), read_attribute(:password), exemplaire_id )
       connexion_zabnetarch.close
@@ -114,42 +114,42 @@ class User < ActiveRecord::Base
       return 'Le renouvellement a été validé.'  if reponse==true
       @@messages[reponse]
   end
-  
+
   def communication params=nil
-      connexion_zabnetarch = Zabnetarch.new 
+      connexion_zabnetarch = Zabnetarch.new
       return false if !connexion_zabnetarch.connect
       params[:name] = read_attribute(:name)
       params[:first_name] = read_attribute(:first_name)
-      
+
       reponse = connexion_zabnetarch.communication( User.get_card_number_from_user_id(read_attribute(:user_id)), read_attribute(:password), params )
 #      Rails.logger.debug 'Reponse 15h06 :  ' + reponse.inspect
       connexion_zabnetarch.close
-      
+
       return @@messages['ADMIN_ERROR'] if reponse[:status].nil?
-      return @@messages[reponse[:status]] if reponse[:status] != 'ok' 
-      
-      File.open('bulletin.txt', 'w') do |f2|  
+      return @@messages[reponse[:status]] if reponse[:status] != 'ok'
+
+      File.open('bulletin.txt', 'w') do |f2|
         f2.puts reponse[:texte]
         # impression en deux fois pour faire un fantôme
         if params[:impression] == '2'
            f2.puts "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n"
-           f2.puts reponse[:texte] 
+           f2.puts reponse[:texte]
         end
       end
 
       result = 'Le bulletin n\'a pas été envoyé. Une erreur s\'est produite'
-      result = system("lp -d lafhpbdp \"bulletin.txt\"" ) if params[:impression] == '1'
-      result = system("lp -d drtimp03 \"bulletin.txt\"" ) if params[:impression] == '2'
-      result = system("lp -d hpcarnot \"bulletin.txt\"" ) if params[:impression] == '16'
-     #result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '2'
-     # result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '1'
-     # result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '16'
+      #result = system("lp -d lafhpbdp \"bulletin.txt\"" ) if params[:impression] == '1'
+      #result = system("lp -d drtimp03 \"bulletin.txt\"" ) if params[:impression] == '2'
+      #result = system("lp -d hpcarnot \"bulletin.txt\"" ) if params[:impression] == '16'
+      result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '2'
+      result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '1'
+      result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '16'
       return 'Le bulletin de demande a été envoyé' if result
 #      return 'Le bulletin de demande a été envoyé' if system("lp", "bulletin.txt" )
   end
-  
-  
-   
+
+
+
   #est-ce que l'utilisateur peut reserver ou faire une demande de communication pour cet exemplaire ( oui si il ne l'a pas déjà en emprunt )
   def get_this_book( barcode )
       return true if @prets.nil?
@@ -159,7 +159,7 @@ class User < ActiveRecord::Base
       }
       emprunte
    end
-   
+
   #est-ce que l'utilisateur peut renouveler son prêt
   def renew_authorization ( barcode = '', nb_renouvellement='1')
       return false if ( nb_renouvellement >= '1' || @prets.nil? )
@@ -170,7 +170,7 @@ class User < ActiveRecord::Base
       }
       renouvelle
   end
-   
+
   def self.clean_barcode (barcode='', succursale='2' )
       return barcode if barcode =~ /^\d{9}$/
       return '0' + barcode + '0' if barcode =~ /^\d{8}$/
@@ -181,36 +181,36 @@ class User < ActiveRecord::Base
       return '000000' + barcode + '0' if barcode =~ /^\d{3}$/
       return '0000000' + barcode + '0' if barcode =~ /^\d{2}$/
    end
-   
+
   #renvoie un objet userbcu ou false pour indiquer si l'utilisateur est reconnu par zabnetarch
   def self.authenticate(login, password)
     connexion_zabnetarch = Zabnetarch.new
     return false if !connexion_zabnetarch.connect
-		
-	user = connexion_zabnetarch.get_lector(login, password)   
+
+    user = connexion_zabnetarch.get_lector(login, password)
     connexion_zabnetarch.close
     user
   end
-   
+
    def self.get_card_number_from_user_id user_id
       return 'L' + user_id   if user_id =~ /^\d{5,6}$/
       return '63' + user_id   if user_id =~ /^\d{9}$/
       user_id
    end
-   
+
    # Method added by Blacklight; Blacklight uses #to_s on your
    # user class to get a user-displayable login/identifier for
-   # the account. 
+   # the account.
    def to_s
      read_attribute(:first_name) + ' ' + read_attribute(:name)
-   end  
-   
+   end
+
    def self.delete_guest_users
       self.destroy_all(:guest => true)
    end
-   
+
    private
-   def self.get_decrypted_password(password)  
-      Encryptor.decrypt(password.encode("ISO-8859-1"), :key => Cle, :iv =>Iv)
-   end
+       def self.get_decrypted_password(password)
+          Encryptor.decrypt(password.encode("ISO-8859-1"), :key => Cle, :iv =>Iv)
+       end
 end
