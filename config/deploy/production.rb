@@ -17,7 +17,7 @@ role :db,  "192.168.120.229", :primary => true # This is where Rails migrations 
 set :stage, :production
 set :branch, "master"
 
-server '192.168.120.229', user: 'mabacaul', roles: %w{web app}, my_property: :my_value
+server '192.168.120.229', user: 'app', roles: %w{web app}, my_property: :my_value
 set :rails_env, :production
 
 # Custom SSH Options
@@ -35,7 +35,7 @@ set :rails_env, :production
 # And/or per server (overrides global)
 # ------------------------------------
 # server '192.168.120.231',
-#   user: 'mabacaul   ',
+#   user: 'app   ',
 #   ssh_options: {
-#     user: 'mabacaul', # overrides user setting above
+#     user: 'app', # overrides user setting above
 #   }

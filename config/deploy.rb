@@ -1,11 +1,17 @@
 # config valid only for Capistrano 3.1
 lock '3.10.0'
 
-set :application, "192.168.120.231"
+set :application, "192.168.120.229"
 set :repo_url, 'https://github.com/bibnumbcu/blacklight_config'
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
+
+set :rbenv_type, :user # or :system, depends on your rbenv setup
+set :rbenv_ruby, '2.4.0'
+set :default_environment, {
+  'PATH' => "$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
+}
 
 # Default deploy_to directory is /var/www/my_app
 set :deploy_to, "/var/www/blacklight"
@@ -38,7 +44,7 @@ set :keep_releases, 10
 #set :deploy_via, :copy
 #set :checkout, 'export'
 #set :keep_releases, 5
-#set :bundle_flags, '--deployment --verbose'
+set :bundle_flags, '--deployment --verbose'
 set :passenger_restart_with_touch, true
 namespace :deploy do
   desc 'Restart application'
@@ -49,7 +55,13 @@ namespace :deploy do
     end
   end
 
-
+  desc "Show ruby version"
+    task :ruby_version do
+      on roles(:all) do |h|
+        execute "ruby --version"
+        execute "rbenv versions"
+      end
+    end
 
 #  after :publishing, :restart
 #  after :restart, :clear_cache do

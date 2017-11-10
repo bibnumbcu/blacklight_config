@@ -1,9 +1,9 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-	
+
   config.action_mailer.default_url_options = {:host => "http://bibliotheque.clermont-universite.fr"}
   ActionMailer::Base.default :from => 'ne-pas-repondre@uca.fr'
-  Blacklight.secret_key = '6784f9e8fca2277a7232df03afff8f3b748e1c3feb17c1edf7ff372b794951ada2acd0b71ee0fe7a5ba52968e255800a3dea151960389e151df4dfcc4153d121'
+  #Blacklight.secret_key = '6784f9e8fca2277a7232df03afff8f3b748e1c3feb17c1edf7ff372b794951ada2acd0b71ee0fe7a5ba52968e255800a3dea151960389e151df4dfcc4153d121'
 
 
   # Code is not reloaded between requests.

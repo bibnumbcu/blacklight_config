@@ -64,3 +64,6 @@ gem 'zoom'
 gem "blacklight_advanced_search"
 gem 'encryptor'
 gem 'oai', source: "https://rubygems.org"
+
+gem 'capistrano', '~> 3.9'
+gem 'capistrano-rbenv', '~> 2.1'
