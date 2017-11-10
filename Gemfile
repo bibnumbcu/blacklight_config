@@ -67,3 +67,5 @@ gem 'oai', source: "https://rubygems.org"
 
 gem 'capistrano', '~> 3.9'
 gem 'capistrano-rbenv', '~> 2.1'
+
+gem 'mysql2'
