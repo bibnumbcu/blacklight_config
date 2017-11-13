@@ -69,3 +69,4 @@ gem 'capistrano', '~> 3.9'
 gem 'capistrano-rbenv', '~> 2.1'
 
 gem 'mysql2'
+gem 'traject'
