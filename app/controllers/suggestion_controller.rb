@@ -31,8 +31,8 @@ class SuggestionController < ApplicationController
 
          # Rails.logger.debug 'bug params : 16h25 ' + testsugg.inspect
          #envoi d'un mail
-        #  UserMailer.send_suggestion_to_recipient(@user, @book, params[:recipient], params[:email], params[:filesuggestion_id]).deliver
-        #  UserMailer.send_suggestion_to_lector(@user, @book, params[:recipient], params[:email]).deliver
+         UserMailer.send_suggestion_to_recipient(@user, @book, params[:recipient], params[:email], params[:filesuggestion_id]).deliver
+         UserMailer.send_suggestion_to_lector(@user, @book, params[:recipient], params[:email]).deliver
           redirect_to '/user/compte'
          flash[:success] = 'Votre demande a été envoyée à nos services.'
       end
