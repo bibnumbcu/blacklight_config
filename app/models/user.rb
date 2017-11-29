@@ -141,9 +141,9 @@ class User < ActiveRecord::Base
       #result = system("lp -d lafhpbdp \"bulletin.txt\"" ) if params[:impression] == '1'
       #result = system("lp -d drtimp03 \"bulletin.txt\"" ) if params[:impression] == '2'
       #result = system("lp -d hpcarnot \"bulletin.txt\"" ) if params[:impression] == '16'
-      result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '2'
-      result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '1'
-      result = system("lp -d HPTEST \"bulletin.txt\"" ) if params[:impression] == '16'
+      result = system("lp -d konica \"bulletin.txt\"" ) if params[:impression] == '2'
+      result = system("lp -d konica \"bulletin.txt\"" ) if params[:impression] == '1'
+      result = system("lp -d konica \"bulletin.txt\"" ) if params[:impression] == '16'
       return 'Le bulletin de demande a été envoyé' if result
 #      return 'Le bulletin de demande a été envoyé' if system("lp", "bulletin.txt" )
   end
