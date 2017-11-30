@@ -7,13 +7,13 @@ class Z3950
 
    # port 2300 pour prod
    # port 2200 pour test
-  def initialize(ip='192.168.120.249', base='abnet_db', port='2200')
+  def initialize(ip='192.168.120.249', base='abnet_db', port='2300')
       @ip = ip
       @base = base
       @port = port
       @url = @ip + ':' + @port + '/' + @base
    end
-   
+
    def search
       resultats = ''
       tries = 0
@@ -41,22 +41,22 @@ class Z3950
 #          Rails.logger.debug 'erreur connexion 13h44' + $!.inspect
          nil
       end
-   
-    
+
+
    end
-   
+
    def get_localisations(reponseXML='', current_user=false)
       resultats = []
-      begin   
+      begin
          doc = REXML::Document.new(reponseXML)
       rescue
-         return resultats 
-      end    
-      
-      doc = REXML::Document.new(reponseXML)      
-      root = doc.root      
+         return resultats
+      end
+
+      doc = REXML::Document.new(reponseXML)
+      root = doc.root
       return resultats if !root.respond_to?('elements')
-      
+
       #parcours des champs 998
       root.elements.each("datafield[@tag='998']") do |element|
          resultab = {}
@@ -73,37 +73,37 @@ class Z3950
             resultab[:statut] = field.elements["[@code='d']"].text if !field.elements["[@code='d']"].nil?
             resultab[:barcode] =  field.elements["[@code='a']"].text if !field.elements["[@code='a']"].nil?
             resultab[:volume] =  field.elements["[@code='n']"].text if !field.elements["[@code='n']"].nil?
-            resultab[:succursale] = field.elements["[@code='m']"].text if !field.elements["[@code='m']"].nil? 
+            resultab[:succursale] = field.elements["[@code='m']"].text if !field.elements["[@code='m']"].nil?
 
 #Rails.logger.debug 'Bug1649 : test : ' + field.elements["[@code='b']"].text.inspect
-      
+
 #           Rails.logger.debug 'Bug07101400 : test : ' + field.elements["[@code='h']"].nil?.inspect + ' ' + field.elements["[@code='l']"].nil?.inspect
-            if !field.elements["[@code='h']"].nil? 
+            if !field.elements["[@code='h']"].nil?
               resultab[:empruntable] = false if !field.elements["[@code='h']"].text.strip.empty?
             end
-            if !field.elements["[@code='l']"].nil? 
+            if !field.elements["[@code='l']"].nil?
                resultab[:empruntable] = false if !field.elements["[@code='l']"].text.strip.empty?
             end
-            
+
 
             if !field.elements["[@code='i']"].nil?
                resultab[:date_retour] = nil
                resultab[:date_retour] = field.elements["[@code='i']"].text if !field.elements["[@code='i']"].text.strip.empty?
             end
-         end 
+         end
          ###########################
          ## droits de reservation ##
          #est-ce que l'utilisateur a le droit de réserver
          resultab[:reservation] = false
-         current_user_authorize = true  
+         current_user_authorize = true
          current_user_authorize =  current_user.get_this_book( resultab[:barcode] ) if  current_user
          authorized_library = true
          libraries = ['1', '2', '4', '5', '6', '9', '10', '11', '12', '13', '18', '20', '21', '24']
          authorized_library = false if ! libraries.include?( resultab[:succursale] )
          resultab[:reservation] =  true if ( ! resultab[:empruntable] && current_user_authorize && authorized_library )
-         
+
          #nettoyage des données pour supprimer les espaces en trop
-         resultab.each {|key, value| 
+         resultab.each {|key, value|
            value.strip! if value.respond_to?(:strip!)
          }
          ##############################
@@ -127,11 +127,11 @@ class Z3950
          end
          resultab[:communication] = false
          resultab[:communication] = true if succursales.include?( resultab[:impression] )
-         
+
           resultats << resultab if !resultab.empty?
       end
-        
-      resultats.sort { |a,b| 
+
+      resultats.sort { |a,b|
          (a[:localisation] <=> b[:localisation]).nonzero? ||
          (b[:cote] <=> a[:cote])
       }
