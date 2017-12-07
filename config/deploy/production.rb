@@ -34,7 +34,7 @@ set :rails_env, :production
 ##
 # And/or per server (overrides global)
 # ------------------------------------
-# server '192.168.120.231',
+# server '192.168.120.229',
 #   user: 'app   ',
 #   ssh_options: {
 #     user: 'app', # overrides user setting above
