@@ -8,7 +8,15 @@
     <div class="document document-show" id="<%= render_index_field_value :document => @document, :field => 'ean_t' %>">
     <%= replace_bad_accent render_document_partials @document, blacklight_config.view_config(:show).partials %>
     </div>
-    <% if !@localisations.empty? && render_index_field_value(:document => @document, :field => 'format') != 'Revue'%>
+
+    <%
+      # on récupère la valeur du champ format qui est prise dans une balise html
+      doc_presenter = show_presenter(@document)
+      format = doc_presenter.field_value 'format'
+      htmldoc = Nokogiri::HTML.fragment(format)
+    %>
+
+    <% if !@localisations.empty? && htmldoc.text != 'Revue'%>
        <div id="localisations">
          <h1>&Agrave; la bibliothèque</h1>
          <table >

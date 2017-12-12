@@ -1,14 +1,14 @@
 # config valid only for Capistrano 3.1
 lock '3.10.0'
 
-set :application, "192.168.120.229"
+set :application, "192.168.120.231"
 set :repo_url, 'https://github.com/bibnumbcu/blacklight_config'
 
 # Default branch is :master
 # ask :branch, proc { `git rev-parse --abbrev-ref HEAD`.chomp }.call
 
 set :rbenv_type, :user # or :system, depends on your rbenv setup
-set :rbenv_ruby, '2.3.3'
+set :rbenv_ruby, '2.4.0'
 set :default_environment, {
   'PATH' => "$HOME/.rbenv/shims:$HOME/.rbenv/bin:$PATH"
 }
