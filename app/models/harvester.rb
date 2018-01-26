@@ -1,7 +1,7 @@
 # -*- encoding : utf-8 -*-
 class Harvester
   attr_accessor :url, :name, :set, :token, :reponse, :client, :writer
-  @@dc_fields = [ 
+  @@dc_fields = [
             { :field_name => 'dc:title', :marc_field => '200a' },
             { :field_name => 'dc:description', :marc_field => '330a' },
             { :field_name => 'dc:creator', :marc_field => '700a' },
@@ -19,7 +19,7 @@ class Harvester
             { :field_name => 'dc:coverage', :marc_field => '607a' },
             { :field_name => 'dc:rights', :marc_field => '230a' }
    ]
-   
+
   def initialize name, url, set
    @name = name
    @url = url
@@ -37,16 +37,16 @@ class Harvester
    end
    token = reponse.resumption_token
    treat_answer reponse
-   
+
    while !token.nil?
       reponse = @client.list_records(:resumption_token => token)
       treat_answer reponse
       token = reponse.resumption_token
    end
-      
+
    @writer.close()
   end
-  
+
   # parcours le xml issu de la reponse et génere le fichier marc
   def treat_answer reponse
    reponse.each{|identifier|
@@ -57,7 +57,11 @@ class Harvester
       record << MARC::ControlField.new('001', identifier.header.identifier.gsub('.', ''))
       @@dc_fields.each { |dc_field|
          identifier.metadata.elements.each('oai_dc:dc/'+dc_field[:field_name]){ |element|
-            text = element.text
+            if dc_field[:field_name]=='dc:creator' || dc_field[:field_name]=='dc:creator'
+              text = element.text.split(',').join(" ")  
+            else
+              text = element.text
+            end
             text = @name if dc_field[:field_name] == 'dc:source'
 #            text = 's' if dc_field[:field_name] == 'dc:format'
             record << MARC::DataField.new(dc_field[:marc_field][0..2], '0', '0', [dc_field[:marc_field][3], text])
