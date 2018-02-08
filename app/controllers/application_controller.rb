@@ -6,9 +6,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery with: :exception
 
   helper_method :current_or_guest_user, :current_user, :user_session, :guest_user
-  
+
    def user_session
-      return true if session[:user_id] && User.where(:user_id => session[:user_id]).first    
+      return true if session[:user_id] && User.where(:user_id => session[:user_id]).first
       false
    end
 
@@ -24,9 +24,15 @@ class ApplicationController < ActionController::Base
    def current_user
       @current_user ||= User.where(:user_id => session[:user_id]).first
    end
-   
+
    def guest_user
-      @guest_user ||= User.find(session[:guest_user_id] ||= create_guest_user.id)
+      if User.exists?(session[:guest_user_id])
+        @guest_user = User.find(session[:guest_user_id])
+      else
+        session[:guest_user_id] = create_guest_user.id
+        @guest_user ||= User.find(session[:guest_user_id])
+      end
+      @guest_user
    end
 
    private
@@ -36,7 +42,7 @@ class ApplicationController < ActionController::Base
       user.save!
       user
    end
-   
+
    def guest_user_unique_id
       Time.now.to_i.to_s + "_" + unique_user_counter.to_s
    end
@@ -49,7 +55,7 @@ class ApplicationController < ActionController::Base
    def controle_acces
       return true if user_session
       session[:previous_page] = request.referer
-      session[:asked_page] = request.url           
+      session[:asked_page] = request.url
       flash[:notice] = 'Veuillez vous connecter.'
       redirect_to(:controller =>'user', :action => 'login')
    end
