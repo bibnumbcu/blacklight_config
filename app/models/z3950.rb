@@ -75,7 +75,7 @@ class Z3950
             resultab[:volume] =  field.elements["[@code='n']"].text if !field.elements["[@code='n']"].nil?
             resultab[:succursale] = field.elements["[@code='m']"].text if !field.elements["[@code='m']"].nil?
 
-#Rails.logger.debug 'Bug1649 : test : ' + field.elements["[@code='b']"].text.inspect
+#Rails.logger.debug 'Bug1601 : test : ' + resultab[:localisation].inspect
 
 #           Rails.logger.debug 'Bug07101400 : test : ' + field.elements["[@code='h']"].nil?.inspect + ' ' + field.elements["[@code='l']"].nil?.inspect
             if !field.elements["[@code='h']"].nil?
@@ -116,7 +116,7 @@ class Z3950
 #         succursales = ['1', '2']
          salles_lafayette_excluded = ['ARCHIVES BASTAIRE', 'LAFAYETTE S. LECTURE', 'LAFAYET.S.CATALOGUES', 'LAF. S. PERIODIQUES']
 #         salles_sante_authorized = ['MAGASIN : DEMANDER A L\'ACCUEIL']
-         salles_carnot_excluded = ['SALLE A11']
+         salles_carnot_excluded = ['SALLE A11','ITALIEN','ALLEMAND']
          salles_droit_authorized = ['MAGASIN BAS 01', 'MAGASIN BAS 02']
          resultab[:impression] = '0'
          if resultab[:empruntable] && current_user_authorize && succursales.include?( resultab[:succursale] )
