@@ -4,8 +4,4 @@
 <td><%= date_in_french prets['date_pret'] %></td>
 <td><%= date_in_french prets['date_retour'] %></td>
 <td><%= prets['nb_renouvellement'] %></td>
-<% if ( @user.renew_authorization( prets['barcode'], prets['nb_renouvellement'])) %>
-<td><%= button_to "Renouveler le prêt", :action=>"renew_loan", :controller=>"user", :barcode => prets['barcode'], :succursale => prets['succursale'] %></td>
-<% end %>
 </tr>
-

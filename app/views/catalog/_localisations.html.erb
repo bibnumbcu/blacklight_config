@@ -7,13 +7,5 @@
    <td><%= localisations[:volume] %></td>
    <td><%= localisations[:statut] %></td>
    <td><%= localisations[:date_retour] %></td>
-
-   <% if localisations[:reservation] %>
-   <td><%= button_to "Réserver l'exemplaire", :action=>"reservation", :controller=>"user", :barcode => localisations[:barcode], :succursale => localisations[:succursale] %></td>
-   <% end %>
-
-   <% if localisations[:communication] %>
-   <td><%= button_to "Demander l'exemplaire", :action=>"communication", :controller=>"user",  :barcode => localisations[:barcode], :cote => localisations[:cote], :cote_suppl => localisations[:cote_suppl], :impression => localisations[:impression], :succursale => localisations[:succursale] %></td>
-   <% end %>
-<% end %> 
+<% end %>
 </tr>
